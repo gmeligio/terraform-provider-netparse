@@ -2,7 +2,6 @@ package provider
 
 import (
 	"context"
-	"net/http"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/function"
@@ -39,21 +38,6 @@ func (p *PublicsuffixProvider) Schema(ctx context.Context, req provider.SchemaRe
 }
 
 func (p *PublicsuffixProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
-	var data PublicsuffixProviderModel
-
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	// Configuration values are now available.
-	// if data.Endpoint.IsNull() { /* ... */ }
-
-	// Example client configuration for data sources and resources
-	client := http.DefaultClient
-	resp.DataSourceData = client
-	resp.ResourceData = client
 }
 
 func (p *PublicsuffixProvider) Resources(ctx context.Context) []func() resource.Resource {
@@ -64,7 +48,7 @@ func (p *PublicsuffixProvider) Resources(ctx context.Context) []func() resource.
 
 func (p *PublicsuffixProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
-		NewExampleDataSource,
+		NewDomainDataSource,
 	}
 }
 
