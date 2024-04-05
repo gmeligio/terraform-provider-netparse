@@ -9,5 +9,5 @@ terraform {
 provider "publicsuffix" {}
 
 data "publicsuffix_domain" "example" {
-  # domain = "www.example.com"
+  domain = "www.example.com"
 }

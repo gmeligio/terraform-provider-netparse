@@ -41,9 +41,7 @@ func (p *PublicsuffixProvider) Configure(ctx context.Context, req provider.Confi
 }
 
 func (p *PublicsuffixProvider) Resources(ctx context.Context) []func() resource.Resource {
-	return []func() resource.Resource{
-		NewExampleResource,
-	}
+	return []func() resource.Resource{}
 }
 
 func (p *PublicsuffixProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
@@ -53,9 +51,7 @@ func (p *PublicsuffixProvider) DataSources(ctx context.Context) []func() datasou
 }
 
 func (p *PublicsuffixProvider) Functions(ctx context.Context) []func() function.Function {
-	return []func() function.Function{
-		NewExampleFunction,
-	}
+	return []func() function.Function{}
 }
 
 func New(version string) func() provider.Provider {

@@ -39,12 +39,12 @@ func (d *domainDataSource) ValidateConfig(ctx context.Context, req datasource.Va
 
 func (d *domainDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "Parses Public Suffix List properties from a domain",
 
 		Attributes: map[string]schema.Attribute{
 			"domain": schema.StringAttribute{
 				MarkdownDescription: "The domain is the Second Level Domain (SLD) + Top Level Domain (TLD). For example: example.domain.org",
+				Required:            true,
 			},
 		},
 	}
@@ -69,7 +69,6 @@ func (d *domainDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 	tflog.Trace(ctx, "read a data source")
 
 	// resp.Diagnostics.Append(data.update(ctx)...)
-
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
