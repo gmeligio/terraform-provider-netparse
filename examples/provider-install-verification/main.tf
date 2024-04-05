@@ -1,13 +1,13 @@
 terraform {
   required_providers {
-    publicsuffix = {
-      source = "registry.terraform.io/gmeligio/publicsuffix"
+    url = {
+      source = "registry.terraform.io/gmeligio/url"
     }
   }
 }
 
-provider "publicsuffix" {}
+provider "url" {}
 
-data "publicsuffix_domain" "example" {
-  domain = "www.example.com"
+data "url_domain" "example" {
+  host = "www.example.com"
 }

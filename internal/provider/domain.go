@@ -12,80 +12,97 @@ import (
 
 // domainDataSourceModel describes the data source data model.
 type domainDataSourceModel struct {
-	Domain types.String `tfsdk:"domain"`
+	Host  types.String `tfsdk:"host"`
+	Manager types.String `tfsdk:"manager"`
+	EffectiveTLD types.String `tfsdk:"effective_tld"`
 }
 
 func (d domainDataSourceModel) validate(_ context.Context) diag.Diagnostics {
 	var diags diag.Diagnostics
 
-	if d.Domain.IsUnknown() || d.Domain.IsNull() {
+	if d.Host.IsUnknown() || d.Host.IsNull() {
 		return diags
 	}
 
-	domain := d.Domain.ValueString()
+	host := d.Host.ValueString()
 
-	eTLD, icann := publicsuffix.PublicSuffix(domain)
+	// url  = 
 
-	manager := "Unmanaged"
-	if icann {
-		manager = "ICANN Managed"
-	} else if strings.IndexByte(eTLD, '.') >= 0 {
-		manager = "Privately Managed"
-	}
+	eTLD, icann := publicsuffix.PublicSuffix(host)
 
-	if manager == "Unmanaged" {
+	manager := findManager(icann, eTLD)
+
+	if manager == "None" {
 		diags.AddAttributeError(
 			path.Root("domain"),
 			"Invalid Attribute Configuration",
-			"Expected domain to be either ICANN managede or privately managed.",
+			"Expected domain to have as a manager either ICANN or Private.",
 		)
 	}
 
 	return diags
 }
 
-// func (d *domainDataSourceModel) update(ctx context.Context) diag.Diagnostics {
-// 	var buffer bytes.Buffer
-// 	var diags diag.Diagnostics
-// 	var err error
+func findManager(icann bool, eTLD string) string {
+	manager := "None"
+	if icann {
+		manager = "ICANN"
+	} else if strings.IndexByte(eTLD, '.') >= 0 {
+		manager = "Private"
+	}
 
-// 	// cloudinit Provider 'v2.2.0' doesn't actually set default values in state properly, so we need to make sure
-// 	// that we don't use any known empty values from previous versions of state
-// 	diags.Append(d.setDefaults(ctx)...)
-// 	if diags.HasError() {
-// 		return diags
-// 	}
+	return manager
+}
 
-// 	var configParts []configPartModel
-// 	diags.Append(d.Parts.ElementsAs(ctx, &configParts, false)...)
-// 	if diags.HasError() {
-// 		return diags
-// 	}
+func (d *domainDataSourceModel) update(ctx context.Context) diag.Diagnostics {
+	// var buffer bytes.Buffer
+	var diags diag.Diagnostics
+	// var err error
 
-// 	if d.Gzip.ValueBool() {
-// 		gzipWriter := gzip.NewWriter(&buffer)
+	// // cloudinit Provider 'v2.2.0' doesn't actually set default values in state properly, so we need to make sure
+	// // that we don't use any known empty values from previous versions of state
+	// diags.Append(d.setDefaults(ctx)...)
+	// if diags.HasError() {
+	// 	return diags
+	// }
 
-// 		err = renderPartsToWriter(ctx, d.Boundary.ValueString(), configParts, gzipWriter)
+	// var configParts []configPartModel
+	// diags.Append(d.Parts.ElementsAs(ctx, &configParts, false)...)
+	// if diags.HasError() {
+	// 	return diags
+	// }
 
-// 		gzipWriter.Close()
-// 	} else {
-// 		err = renderPartsToWriter(ctx, d.Boundary.ValueString(), configParts, &buffer)
-// 	}
+	// if d.Gzip.ValueBool() {
+	// 	gzipWriter := gzip.NewWriter(&buffer)
 
-// 	if err != nil {
-// 		diags.AddError("Unable to render cloudinit config to MIME multi-part file", err.Error())
-// 		return diags
-// 	}
+	// 	err = renderPartsToWriter(ctx, d.Boundary.ValueString(), configParts, gzipWriter)
 
-// 	output := ""
-// 	if d.Base64Encode.ValueBool() {
-// 		output = base64.StdEncoding.EncodeToString(buffer.Bytes())
-// 	} else {
-// 		output = buffer.String()
-// 	}
+	// 	gzipWriter.Close()
+	// } else {
+	// 	err = renderPartsToWriter(ctx, d.Boundary.ValueString(), configParts, &buffer)
+	// }
 
-// 	d.ID = types.StringValue(strconv.Itoa(hashcode.String(output)))
-// 	d.Rendered = types.StringValue(output)
+	// if err != nil {
+	// 	diags.AddError("Unable to render cloudinit config to MIME multi-part file", err.Error())
+	// 	return diags
+	// }
 
-// 	return diags
-// }
+	// output := ""
+	// if d.Base64Encode.ValueBool() {
+	// 	output = base64.StdEncoding.EncodeToString(buffer.Bytes())
+	// } else {
+	// 	output = buffer.String()
+	// }
+
+	// d.ID = types.StringValue(strconv.Itoa(hashcode.String(output)))
+	// d.Rendered = types.StringValue(output)
+
+	host := d.Host.ValueString()
+
+	eTLD, icann := publicsuffix.PublicSuffix(host)
+
+	d.Manager = types.StringValue(findManager(icann, eTLD))
+	d.EffectiveTLD = types.StringValue(eTLD)
+
+	return diags
+}

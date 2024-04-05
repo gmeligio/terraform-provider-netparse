@@ -11,52 +11,52 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-// Ensure PublicsuffixProvider satisfies various provider interfaces.
-var _ provider.Provider = &PublicsuffixProvider{}
-var _ provider.ProviderWithFunctions = &PublicsuffixProvider{}
+// Ensure UrlProvider satisfies various provider interfaces.
+var _ provider.Provider = &UrlProvider{}
+var _ provider.ProviderWithFunctions = &UrlProvider{}
 
-// PublicsuffixProvider defines the provider implementation.
-type PublicsuffixProvider struct {
+// UrlProvider defines the provider implementation.
+type UrlProvider struct {
 	// version is set to the provider version on release, "dev" when the
 	// provider is built and ran locally, and "test" when running acceptance
 	// testing.
 	version string
 }
 
-// PublicsuffixProviderModel describes the provider data model.
-type PublicsuffixProviderModel struct {
+// UrlProviderModel describes the provider data model.
+type UrlProviderModel struct {
 	Endpoint types.String `tfsdk:"endpoint"`
 }
 
-func (p *PublicsuffixProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
-	resp.TypeName = "publicsuffix"
+func (p *UrlProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
+	resp.TypeName = "url"
 	resp.Version = p.version
 }
 
-func (p *PublicsuffixProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
+func (p *UrlProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{}
 }
 
-func (p *PublicsuffixProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
+func (p *UrlProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
 }
 
-func (p *PublicsuffixProvider) Resources(ctx context.Context) []func() resource.Resource {
+func (p *UrlProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{}
 }
 
-func (p *PublicsuffixProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
+func (p *UrlProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
 		NewDomainDataSource,
 	}
 }
 
-func (p *PublicsuffixProvider) Functions(ctx context.Context) []func() function.Function {
+func (p *UrlProvider) Functions(ctx context.Context) []func() function.Function {
 	return []func() function.Function{}
 }
 
 func New(version string) func() provider.Provider {
 	return func() provider.Provider {
-		return &PublicsuffixProvider{
+		return &UrlProvider{
 			version: version,
 		}
 	}

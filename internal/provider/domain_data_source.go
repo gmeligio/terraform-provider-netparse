@@ -2,7 +2,6 @@ package provider
 
 import (
 	"context"
-	"net/http"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -19,7 +18,6 @@ func NewDomainDataSource() datasource.DataSource {
 
 // domainDataSource defines the data source implementation.
 type domainDataSource struct {
-	client *http.Client
 }
 
 func (d *domainDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -42,9 +40,17 @@ func (d *domainDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 		MarkdownDescription: "Parses Public Suffix List properties from a domain",
 
 		Attributes: map[string]schema.Attribute{
-			"domain": schema.StringAttribute{
-				MarkdownDescription: "The domain is the Second Level Domain (SLD) + Top Level Domain (TLD). For example: example.domain.org",
+			"host": schema.StringAttribute{
+				MarkdownDescription: "The host that identifies the domain name",
 				Required:            true,
+			},
+			"effective_tld": schema.StringAttribute{
+				MarkdownDescription: "The effective top-level domain (eTLD) of the domain. This is the public suffix of the domain.",
+				Computed:            true,
+			},
+			"manager": schema.StringAttribute{
+				MarkdownDescription: "The manager is the entity that manages the domain. It can be one of the following: ICANN, Private, or None.",
+				Computed:            true,
 			},
 		},
 	}
@@ -62,13 +68,13 @@ func (d *domainDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 
 	// For the purposes of this example code, hardcoding a response value to
 	// save into the Terraform state.
-	data.Domain = types.StringValue("foo.example.com")
+	data.Host = types.StringValue("foo.example.com")
 
 	// Write logs using the tflog package
 	// Documentation: https://terraform.io/plugin/log
 	tflog.Trace(ctx, "read a data source")
 
-	// resp.Diagnostics.Append(data.update(ctx)...)
+	resp.Diagnostics.Append(data.update(ctx)...)
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

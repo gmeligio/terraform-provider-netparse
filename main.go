@@ -5,7 +5,7 @@ import (
 	"flag"
 	"log"
 
-	"github.com/gmeligio/terraform-provider-publicsuffix/internal/provider"
+	"github.com/gmeligio/terraform-provider-url/internal/provider"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 )
 
@@ -17,7 +17,7 @@ import (
 
 // Run the docs generation tool, check its repository for more information on how it works and how docs
 // can be customized.
-//go:generate go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs generate -provider-name publicsuffix
+//go:generate go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs generate -provider-name url
 
 var (
 	// these will be set by the goreleaser configuration
@@ -38,7 +38,7 @@ func main() {
 		// TODO: Update this string with the published name of your provider.
 		// Also update the tfplugindocs generate command to either remove the
 		// -provider-name flag or set its value to the updated provider name.
-		Address: "registry.terraform.io/gmeligio/publicsuffix",
+		Address: "registry.terraform.io/gmeligio/url",
 		Debug:   debug,
 	}
 
