@@ -5,7 +5,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
@@ -40,16 +39,28 @@ func (d *domainDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 		MarkdownDescription: "Parses Public Suffix List properties from a domain",
 
 		Attributes: map[string]schema.Attribute{
+			"domain": schema.StringAttribute{
+				MarkdownDescription: "The domain name. It's the tld plus one more label. For example: example.com for host foo.example.com",
+				Computed:            true,
+			},
 			"host": schema.StringAttribute{
 				MarkdownDescription: "The host that identifies the domain name",
 				Required:            true,
 			},
-			"effective_tld": schema.StringAttribute{
-				MarkdownDescription: "The effective top-level domain (eTLD) of the domain. This is the public suffix of the domain.",
-				Computed:            true,
-			},
 			"manager": schema.StringAttribute{
 				MarkdownDescription: "The manager is the entity that manages the domain. It can be one of the following: ICANN, Private, or None.",
+				Computed:            true,
+			},
+			"sld": schema.StringAttribute{
+				MarkdownDescription: "The second-level domain (SLD) is the label to the left of the effective TLD. For example: example for example.com, or foo for foo.co.uk",
+				Computed:            true,
+			},
+			"subdomain": schema.StringAttribute{
+				MarkdownDescription: "The subdomain is the left part of the host that is not the domain. For example: www for www.example.com, mail for mail.foo.org, blog for blog.bar.org",
+				Computed:            true,
+			},
+			"tld": schema.StringAttribute{
+				MarkdownDescription: "The effective top-level domain (eTLD) of the domain. This is the public suffix of the domain. For example: com for example.com, or co.uk for foo.co.uk",
 				Computed:            true,
 			},
 		},
@@ -59,19 +70,12 @@ func (d *domainDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 func (d *domainDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data domainDataSourceModel
 
-	// Read Terraform configuration data into the model
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// For the purposes of this example code, hardcoding a response value to
-	// save into the Terraform state.
-	data.Host = types.StringValue("foo.example.com")
-
-	// Write logs using the tflog package
-	// Documentation: https://terraform.io/plugin/log
 	tflog.Trace(ctx, "read a data source")
 
 	resp.Diagnostics.Append(data.update(ctx)...)

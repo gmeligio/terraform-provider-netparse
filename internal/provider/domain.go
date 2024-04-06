@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -11,12 +12,22 @@ import (
 )
 
 // domainDataSourceModel describes the data source data model.
+// References used
+// https://github.com/lupomontero/psl
+// https://github.com/jpillora/go-tld
+// https://github.com/zomasec/tld
+// https://github.com/bobesa/go-domain-util
+// https://github.com/joeguo/tldextract
 type domainDataSourceModel struct {
-	Host  types.String `tfsdk:"host"`
-	Manager types.String `tfsdk:"manager"`
-	EffectiveTLD types.String `tfsdk:"effective_tld"`
+	Domain    types.String `tfsdk:"domain"`
+	Host      types.String `tfsdk:"host"`
+	Manager   types.String `tfsdk:"manager"`
+	SLD       types.String `tfsdk:"sld"`
+	Subdomain types.String `tfsdk:"subdomain"`
+	TLD       types.String `tfsdk:"tld"`
 }
 
+// TODO: Use regexp from `psl.isValid` to validate and remove verification of manager
 func (d domainDataSourceModel) validate(_ context.Context) diag.Diagnostics {
 	var diags diag.Diagnostics
 
@@ -26,17 +37,15 @@ func (d domainDataSourceModel) validate(_ context.Context) diag.Diagnostics {
 
 	host := d.Host.ValueString()
 
-	// url  = 
-
 	eTLD, icann := publicsuffix.PublicSuffix(host)
 
 	manager := findManager(icann, eTLD)
 
 	if manager == "None" {
 		diags.AddAttributeError(
-			path.Root("domain"),
+			path.Root("host"),
 			"Invalid Attribute Configuration",
-			"Expected domain to have as a manager either ICANN or Private.",
+			"Expected host to have as a manager either ICANN or Private.",
 		)
 	}
 
@@ -54,55 +63,48 @@ func findManager(icann bool, eTLD string) string {
 	return manager
 }
 
-func (d *domainDataSourceModel) update(ctx context.Context) diag.Diagnostics {
-	// var buffer bytes.Buffer
+func (d *domainDataSourceModel) update(_ context.Context) diag.Diagnostics {
 	var diags diag.Diagnostics
-	// var err error
-
-	// // cloudinit Provider 'v2.2.0' doesn't actually set default values in state properly, so we need to make sure
-	// // that we don't use any known empty values from previous versions of state
-	// diags.Append(d.setDefaults(ctx)...)
-	// if diags.HasError() {
-	// 	return diags
-	// }
-
-	// var configParts []configPartModel
-	// diags.Append(d.Parts.ElementsAs(ctx, &configParts, false)...)
-	// if diags.HasError() {
-	// 	return diags
-	// }
-
-	// if d.Gzip.ValueBool() {
-	// 	gzipWriter := gzip.NewWriter(&buffer)
-
-	// 	err = renderPartsToWriter(ctx, d.Boundary.ValueString(), configParts, gzipWriter)
-
-	// 	gzipWriter.Close()
-	// } else {
-	// 	err = renderPartsToWriter(ctx, d.Boundary.ValueString(), configParts, &buffer)
-	// }
-
-	// if err != nil {
-	// 	diags.AddError("Unable to render cloudinit config to MIME multi-part file", err.Error())
-	// 	return diags
-	// }
-
-	// output := ""
-	// if d.Base64Encode.ValueBool() {
-	// 	output = base64.StdEncoding.EncodeToString(buffer.Bytes())
-	// } else {
-	// 	output = buffer.String()
-	// }
-
-	// d.ID = types.StringValue(strconv.Itoa(hashcode.String(output)))
-	// d.Rendered = types.StringValue(output)
 
 	host := d.Host.ValueString()
 
 	eTLD, icann := publicsuffix.PublicSuffix(host)
 
+	sld, err := findSld(host, eTLD)
+	if err != nil {
+		diags.AddAttributeError(
+			path.Root("sld"),
+			"Invalid Attribute Configuration",
+			err.Error(),
+		)
+	}
+
+	domain := sld + "." + eTLD
+
+	d.Domain = types.StringValue(domain)
 	d.Manager = types.StringValue(findManager(icann, eTLD))
-	d.EffectiveTLD = types.StringValue(eTLD)
+	d.SLD = types.StringValue(sld)
+	d.Subdomain = types.StringValue(strings.TrimSuffix(host, "."+domain))
+	d.TLD = types.StringValue(eTLD)
 
 	return diags
+}
+
+func findSld(host, eTLD string) (string, error) {
+	if strings.HasPrefix(host, ".") || strings.HasSuffix(host, ".") || strings.Contains(host, "..") {
+		return "", fmt.Errorf("publicsuffix: empty label in domain %q", host)
+	}
+
+	if len(host) <= len(eTLD) {
+		return "", fmt.Errorf("publicsuffix: cannot derive eTLD+1 for domain %q", host)
+	}
+	i := len(host) - len(eTLD) - 1
+	if host[i] != '.' {
+		return "", fmt.Errorf("publicsuffix: invalid public suffix %q for domain %q", eTLD, host)
+	}
+
+	leftTld := host[:i]
+	lastDotInLeftTld := strings.LastIndex(leftTld, ".")
+
+	return host[1+lastDotInLeftTld : i], nil
 }

@@ -21,5 +21,8 @@ Parses Public Suffix List properties from a domain
 
 ### Read-Only
 
-- `effective_tld` (String) The effective top-level domain (eTLD) of the domain. This is the public suffix of the domain.
+- `domain` (String) The domain name. It's the tld plus one more label. For example: example.com for host foo.example.com
 - `manager` (String) The manager is the entity that manages the domain. It can be one of the following: ICANN, Private, or None.
+- `sld` (String) The second-level domain (SLD) is the label to the left of the effective TLD. For example: example for example.com, or foo for foo.co.uk
+- `subdomain` (String) The subdomain is the left part of the host that is not the domain. For example: www for www.example.com, mail for mail.foo.org, blog for blog.bar.org
+- `tld` (String) The effective top-level domain (eTLD) of the domain. This is the public suffix of the domain. For example: com for example.com, or co.uk for foo.co.uk

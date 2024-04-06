@@ -7,7 +7,3 @@ terraform {
 }
 
 provider "url" {}
-
-data "url_domain" "example" {
-  host = "www.example.com"
-}
