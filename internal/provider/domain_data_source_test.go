@@ -56,22 +56,3 @@ data "url_domain" "test" {
 }
 `, host)
 }
-
-
-// const testAccDomainDataSourceConfigMultipleSubdomain = `
-// data "url_domain" "test" {
-//   host = "foo.bar.example.com"
-// }
-// `
-
-// const testAccDomainDataSourceConfigSingleSubdomain = `
-// data "url_domain" "test" {
-//   host = "foo.example.com"
-// }
-// `
-
-// const testAccDomainDataSourceConfigNoSubdomain = `
-// data "url_domain" "test" {
-//   host = "example.com"
-// }
-// `
