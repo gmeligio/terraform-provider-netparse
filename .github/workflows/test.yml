@@ -26,7 +26,8 @@ jobs:
       - uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
         with:
           go-version-file: 'go.mod'
-          cache: true
+          # TODO: Enable cache after issue is resolved: https://github.com/golangci/golangci-lint-action/issues/135
+          # cache: true
       - run: go mod download
       - run: go build -v .
       - name: Run linters
