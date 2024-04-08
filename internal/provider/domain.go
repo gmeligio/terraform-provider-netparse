@@ -12,7 +12,7 @@ import (
 )
 
 // domainDataSourceModel describes the data source data model.
-// References used
+// References used.
 // https://github.com/lupomontero/psl
 // https://github.com/jpillora/go-tld
 // https://github.com/zomasec/tld
@@ -27,7 +27,7 @@ type domainDataSourceModel struct {
 	TLD       types.String `tfsdk:"tld"`
 }
 
-// TODO: Use regexp from `psl.isValid` to validate and remove verification of manager
+// TODO: Use regexp from `psl.isValid` to validate and remove verification of manager.
 func (d domainDataSourceModel) validate(_ context.Context) diag.Diagnostics {
 	var diags diag.Diagnostics
 
@@ -94,7 +94,7 @@ func (d *domainDataSourceModel) update(_ context.Context) diag.Diagnostics {
 }
 
 func extractSubdomain(host, domain string) string {
-	// If the host is the same as the domain, there is no subdomain
+	// If the host is the same as the domain, there is no subdomain.
 	if host == domain {
 		return ""
 	}
