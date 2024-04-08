@@ -9,7 +9,7 @@ terraform {
 provider "url" {}
 
 data "url_domain" "example" {
-  host = "www.example.com"
+  host = "example.com"
 }
 
 output "domain" {

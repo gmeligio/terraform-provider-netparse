@@ -69,8 +69,9 @@ func (d *domainDataSourceModel) update(_ context.Context) diag.Diagnostics {
 	host := d.Host.ValueString()
 
 	eTLD, icann := publicsuffix.PublicSuffix(host)
+	d.TLD = types.StringValue(eTLD)
 
-	sld, err := findSld(host, eTLD)
+	sld, err := extractSld(host, eTLD)
 	if err != nil {
 		diags.AddAttributeError(
 			path.Root("sld"),
@@ -78,19 +79,30 @@ func (d *domainDataSourceModel) update(_ context.Context) diag.Diagnostics {
 			err.Error(),
 		)
 	}
+	d.SLD = types.StringValue(sld)
 
 	domain := sld + "." + eTLD
-
 	d.Domain = types.StringValue(domain)
-	d.Manager = types.StringValue(findManager(icann, eTLD))
-	d.SLD = types.StringValue(sld)
-	d.Subdomain = types.StringValue(strings.TrimSuffix(host, "."+domain))
-	d.TLD = types.StringValue(eTLD)
+
+	manager := findManager(icann, eTLD)
+	d.Manager = types.StringValue(manager)
+
+	subdomain := extractSubdomain(host, domain)
+	d.Subdomain = types.StringValue(subdomain)
 
 	return diags
 }
 
-func findSld(host, eTLD string) (string, error) {
+func extractSubdomain(host, domain string) string {
+	// If the host is the same as the domain, there is no subdomain
+	if host == domain {
+		return ""
+	}
+
+	return strings.TrimSuffix(host, "."+domain)
+}
+
+func extractSld(host, eTLD string) (string, error) {
 	if strings.HasPrefix(host, ".") || strings.HasSuffix(host, ".") || strings.Contains(host, "..") {
 		return "", fmt.Errorf("publicsuffix: empty label in domain %q", host)
 	}

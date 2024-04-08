@@ -1,19 +1,19 @@
 package provider
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
 func TestAccDomainDataSource(t *testing.T) {
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
+	resource.ParallelTest(t, resource.TestCase{
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			// Read testing
 			{
-				Config: testAccDomainDataSourceConfigMultipleSubdomain,
+				Config: testAccDomainDataSource("foo.bar.example.com"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("data.url_domain.test", "domain", "example.com"),
 					resource.TestCheckResourceAttr("data.url_domain.test", "host", "foo.bar.example.com"),
@@ -24,7 +24,7 @@ func TestAccDomainDataSource(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccDomainDataSourceConfigSingleSubdomain,
+				Config: testAccDomainDataSource("foo.example.com"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("data.url_domain.test", "domain", "example.com"),
 					resource.TestCheckResourceAttr("data.url_domain.test", "host", "foo.example.com"),
@@ -34,41 +34,44 @@ func TestAccDomainDataSource(t *testing.T) {
 					resource.TestCheckResourceAttr("data.url_domain.test", "tld", "com"),
 				),
 			},
-			// {
-			// 	Config: testAccDomainDataSourceConfig,
-			// 	Check: resource.ComposeAggregateTestCheckFunc(
-			// 		resource.TestCheckResourceAttr("data.url_domain.test", "domain", "example.com"),
-			// 		resource.TestCheckResourceAttr("data.url_domain.test", "host", "foo.example.com"),
-			// 	),
-			// },
+			{
+				Config: testAccDomainDataSource("example.com"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("data.url_domain.test", "domain", "example.com"),
+					resource.TestCheckResourceAttr("data.url_domain.test", "host", "example.com"),
+					resource.TestCheckResourceAttr("data.url_domain.test", "manager", "ICANN"),
+					resource.TestCheckResourceAttr("data.url_domain.test", "sld", "example"),
+					resource.TestCheckResourceAttr("data.url_domain.test", "subdomain", ""),
+					resource.TestCheckResourceAttr("data.url_domain.test", "tld", "com"),
+				),
+			},
 		},
 	})
 }
 
-const testAccDomainDataSourceConfigMultipleSubdomain = `
-terraform {
-  required_providers {
-    url = {
-      source = "registry.terraform.io/gmeligio/url"
-    }
-  }
-}
-
+func testAccDomainDataSource(host string) string {
+	return fmt.Sprintf(`
 data "url_domain" "test" {
-  host = "foo.bar.example.com"
+  host = %[1]q
 }
-`
-
-const testAccDomainDataSourceConfigSingleSubdomain = `
-terraform {
-  required_providers {
-    url = {
-      source = "registry.terraform.io/gmeligio/url"
-    }
-  }
+`, host)
 }
 
-data "url_domain" "test" {
-  host = "foo.example.com"
-}
-`
+
+// const testAccDomainDataSourceConfigMultipleSubdomain = `
+// data "url_domain" "test" {
+//   host = "foo.bar.example.com"
+// }
+// `
+
+// const testAccDomainDataSourceConfigSingleSubdomain = `
+// data "url_domain" "test" {
+//   host = "foo.example.com"
+// }
+// `
+
+// const testAccDomainDataSourceConfigNoSubdomain = `
+// data "url_domain" "test" {
+//   host = "example.com"
+// }
+// `
