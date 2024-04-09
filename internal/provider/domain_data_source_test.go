@@ -15,7 +15,7 @@ func TestAccDomainDataSource(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				ResourceName: resourceFqn,
-				Config: testAccDomainDataSource("foo.bar.example.com"),
+				Config:       testAccDomainDataSource("foo.bar.example.com"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceFqn, "domain", "example.com"),
 					resource.TestCheckResourceAttr(resourceFqn, "host", "foo.bar.example.com"),
@@ -27,7 +27,7 @@ func TestAccDomainDataSource(t *testing.T) {
 			},
 			{
 				ResourceName: resourceFqn,
-				Config: testAccDomainDataSource("foo.example.com"),
+				Config:       testAccDomainDataSource("foo.example.com"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceFqn, "domain", "example.com"),
 					resource.TestCheckResourceAttr(resourceFqn, "host", "foo.example.com"),
@@ -39,7 +39,7 @@ func TestAccDomainDataSource(t *testing.T) {
 			},
 			{
 				ResourceName: resourceFqn,
-				Config: testAccDomainDataSource("example.com"),
+				Config:       testAccDomainDataSource("example.com"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceFqn, "domain", "example.com"),
 					resource.TestCheckResourceAttr(resourceFqn, "host", "example.com"),
