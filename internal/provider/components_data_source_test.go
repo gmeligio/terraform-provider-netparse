@@ -95,7 +95,7 @@ func TestAccComponentsDataSource(t *testing.T) {
 			{
 				ResourceName: resourceFqn,
 				Config:       testAccComponentsDataSource("://example.com"),
-				ExpectError: regexp.MustCompile("parse \"://example.com\": missing protocol scheme"),
+				ExpectError:  regexp.MustCompile("parse \"://example.com\": missing protocol scheme"),
 			},
 		},
 	})
