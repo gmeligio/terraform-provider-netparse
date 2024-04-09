@@ -41,3 +41,8 @@ In order to run the full suite of Acceptance tests, run `make testacc`.
 ```shell
 make testacc
 ```
+
+### TODO
+
+1. Migrate to GitHub action [ghaction-terraform-provider-release](https://github.com/hashicorp/ghaction-terraform-provider-release)
+1. Refer in documentation: [What is a URL](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_URL)

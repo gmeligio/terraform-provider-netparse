@@ -5,7 +5,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -26,12 +25,14 @@ func (d *domainDataSource) Metadata(ctx context.Context, req datasource.Metadata
 func (d *domainDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
 	var data domainDataSourceModel
 
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	diags := req.Config.Get(ctx, &data)
+	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	resp.Diagnostics.Append(data.validate(ctx)...)
+	diags = data.validate(ctx)
+	resp.Diagnostics.Append(diags...)
 }
 
 func (d *domainDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
@@ -70,15 +71,17 @@ func (d *domainDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 func (d *domainDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data domainDataSourceModel
 
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	diags := req.Config.Get(ctx, &data)
+
+	resp.Diagnostics.Append(diags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	tflog.Trace(ctx, "read a data source")
+	diags = data.update(ctx)
+	resp.Diagnostics.Append(diags...)
 
-	resp.Diagnostics.Append(data.update(ctx)...)
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	diags = resp.State.Set(ctx, &data)
+	resp.Diagnostics.Append(diags...)
 }

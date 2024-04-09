@@ -8,40 +8,42 @@ import (
 )
 
 func TestAccDomainDataSource(t *testing.T) {
+	resourceFqn := "data.url_domain.test"
+
 	resource.ParallelTest(t, resource.TestCase{
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDomainDataSource("foo.bar.example.com"),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("data.url_domain.test", "domain", "example.com"),
-					resource.TestCheckResourceAttr("data.url_domain.test", "host", "foo.bar.example.com"),
-					resource.TestCheckResourceAttr("data.url_domain.test", "manager", "ICANN"),
-					resource.TestCheckResourceAttr("data.url_domain.test", "sld", "example"),
-					resource.TestCheckResourceAttr("data.url_domain.test", "subdomain", "foo.bar"),
-					resource.TestCheckResourceAttr("data.url_domain.test", "tld", "com"),
+					resource.TestCheckResourceAttr(resourceFqn, "domain", "example.com"),
+					resource.TestCheckResourceAttr(resourceFqn, "host", "foo.bar.example.com"),
+					resource.TestCheckResourceAttr(resourceFqn, "manager", "ICANN"),
+					resource.TestCheckResourceAttr(resourceFqn, "sld", "example"),
+					resource.TestCheckResourceAttr(resourceFqn, "subdomain", "foo.bar"),
+					resource.TestCheckResourceAttr(resourceFqn, "tld", "com"),
 				),
 			},
 			{
 				Config: testAccDomainDataSource("foo.example.com"),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("data.url_domain.test", "domain", "example.com"),
-					resource.TestCheckResourceAttr("data.url_domain.test", "host", "foo.example.com"),
-					resource.TestCheckResourceAttr("data.url_domain.test", "manager", "ICANN"),
-					resource.TestCheckResourceAttr("data.url_domain.test", "sld", "example"),
-					resource.TestCheckResourceAttr("data.url_domain.test", "subdomain", "foo"),
-					resource.TestCheckResourceAttr("data.url_domain.test", "tld", "com"),
+					resource.TestCheckResourceAttr(resourceFqn, "domain", "example.com"),
+					resource.TestCheckResourceAttr(resourceFqn, "host", "foo.example.com"),
+					resource.TestCheckResourceAttr(resourceFqn, "manager", "ICANN"),
+					resource.TestCheckResourceAttr(resourceFqn, "sld", "example"),
+					resource.TestCheckResourceAttr(resourceFqn, "subdomain", "foo"),
+					resource.TestCheckResourceAttr(resourceFqn, "tld", "com"),
 				),
 			},
 			{
 				Config: testAccDomainDataSource("example.com"),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("data.url_domain.test", "domain", "example.com"),
-					resource.TestCheckResourceAttr("data.url_domain.test", "host", "example.com"),
-					resource.TestCheckResourceAttr("data.url_domain.test", "manager", "ICANN"),
-					resource.TestCheckResourceAttr("data.url_domain.test", "sld", "example"),
-					resource.TestCheckResourceAttr("data.url_domain.test", "subdomain", ""),
-					resource.TestCheckResourceAttr("data.url_domain.test", "tld", "com"),
+					resource.TestCheckResourceAttr(resourceFqn, "domain", "example.com"),
+					resource.TestCheckResourceAttr(resourceFqn, "host", "example.com"),
+					resource.TestCheckResourceAttr(resourceFqn, "manager", "ICANN"),
+					resource.TestCheckResourceAttr(resourceFqn, "sld", "example"),
+					resource.TestCheckResourceAttr(resourceFqn, "subdomain", ""),
+					resource.TestCheckResourceAttr(resourceFqn, "tld", "com"),
 				),
 			},
 		},

@@ -46,6 +46,7 @@ func (p *UrlProvider) Resources(ctx context.Context) []func() resource.Resource 
 
 func (p *UrlProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
+		NewComponentsDataSource,
 		NewDomainDataSource,
 	}
 }
