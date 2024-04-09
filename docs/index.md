@@ -1,9 +1,9 @@
 ---
-page_title: "Provider: URL"
+page_title: "Provider: netparse"
 description: |-
-    The URL provider is used to interact with URLs and domains.
+    The netparse provider is used to interact with URLs and domains.
 ---
 
-# URL Provider
+# netparse Provider
 
-The URL provider is used to interact with URLs and domains.
+The netparse provider is used to interact with URLs and domains.
