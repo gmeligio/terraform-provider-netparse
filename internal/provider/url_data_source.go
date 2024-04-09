@@ -8,22 +8,22 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ datasource.DataSource = &componentsDataSource{}
+var _ datasource.DataSource = &urlDataSource{}
 
-func NewComponentsDataSource() datasource.DataSource {
-	return &componentsDataSource{}
+func NewUrlDataSource() datasource.DataSource {
+	return &urlDataSource{}
 }
 
-// componentsDataSource defines the data source implementation.
-type componentsDataSource struct {
+// urlDataSource defines the data source implementation.
+type urlDataSource struct {
 }
 
-func (c *componentsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_components"
+func (u *urlDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_url"
 }
 
-func (c *componentsDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
-	var data componentsDataSourceModel
+func (u *urlDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
+	var data urlDataSourceModel
 
 	diags := req.Config.Get(ctx, &data)
 	resp.Diagnostics.Append(diags...)
@@ -35,7 +35,7 @@ func (c *componentsDataSource) ValidateConfig(ctx context.Context, req datasourc
 	resp.Diagnostics.Append(diags...)
 }
 
-func (c *componentsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (u *urlDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "Parses URL components from a URL string.",
 
@@ -100,8 +100,8 @@ func (c *componentsDataSource) Schema(ctx context.Context, req datasource.Schema
 	}
 }
 
-func (c *componentsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data componentsDataSourceModel
+func (u *urlDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data urlDataSourceModel
 
 	diags := req.Config.Get(ctx, &data)
 

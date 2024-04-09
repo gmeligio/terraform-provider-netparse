@@ -1,4 +1,4 @@
-# Terraform Provider: URL
+# Terraform Provider: netparse
 
 ## Using the provider
 

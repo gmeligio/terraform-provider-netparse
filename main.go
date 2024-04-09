@@ -5,7 +5,7 @@ import (
 	"flag"
 	"log"
 
-	"github.com/gmeligio/terraform-provider-url/internal/provider"
+	"github.com/gmeligio/terraform-provider-netparse/internal/provider"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 )
 
@@ -17,7 +17,7 @@ import (
 
 // Run the docs generation tool, check its repository for more information on how it works and how docs
 // can be customized.
-//go:generate go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs generate -provider-name url
+//go:generate go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs generate -provider-name netparse
 
 var (
 	// these will be set by the goreleaser configuration

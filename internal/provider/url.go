@@ -9,11 +9,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-// componentsDataSourceModel describes the data source data model.
+// urlDataSourceModel describes the data source data model.
 // References used.
 // https://registry.terraform.io/modules/matti/urlparse/external/latest
 // https://registry.terraform.io/providers/northwood-labs/corefunc/latest/docs/data-sources/url_parse
-type componentsDataSourceModel struct {
+type urlDataSourceModel struct {
 	Url         types.String `tfsdk:"url"`
 	Authority   types.String `tfsdk:"authority"`
 	Protocol    types.String `tfsdk:"protocol"`
@@ -30,7 +30,7 @@ type componentsDataSourceModel struct {
 	Fragment    types.String `tfsdk:"fragment"`
 }
 
-func (d componentsDataSourceModel) validate(_ context.Context) diag.Diagnostics {
+func (u urlDataSourceModel) validate(_ context.Context) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	// if d.Host.IsUnknown() || d.Host.IsNull() {
@@ -54,7 +54,7 @@ func (d componentsDataSourceModel) validate(_ context.Context) diag.Diagnostics 
 	return diags
 }
 
-func (d *componentsDataSourceModel) update(_ context.Context) diag.Diagnostics {
+func (u *urlDataSourceModel) update(_ context.Context) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	// host := d.Host.ValueString()
@@ -81,7 +81,7 @@ func (d *componentsDataSourceModel) update(_ context.Context) diag.Diagnostics {
 	// subdomain := extractSubdomain(host, domain)
 	// d.Subdomain = types.StringValue(subdomain)
 
-	rawURL := d.Url.ValueString()
+	rawURL := u.Url.ValueString()
 
 	parsed, err := url.Parse(rawURL)
 	if err != nil {
@@ -93,43 +93,43 @@ func (d *componentsDataSourceModel) update(_ context.Context) diag.Diagnostics {
 	}
 
 	authority := renderAuthority(parsed)
-	d.Authority = types.StringValue(authority)
+	u.Authority = types.StringValue(authority)
 
 	scheme := parsed.Scheme
-	d.Scheme = types.StringValue(scheme)
+	u.Scheme = types.StringValue(scheme)
 
 	protocol := scheme + ":"
-	d.Protocol = types.StringValue(protocol)
+	u.Protocol = types.StringValue(protocol)
 
 	credentials := parsed.User.String()
-	d.Credentials = types.StringValue(credentials)
+	u.Credentials = types.StringValue(credentials)
 
 	username := parsed.User.Username()
-	d.Username = types.StringValue(username)
+	u.Username = types.StringValue(username)
 
 	password, _ := parsed.User.Password()
-	d.Password = types.StringValue(password)
+	u.Password = types.StringValue(password)
 
 	host := parsed.Hostname()
-	d.Host = types.StringValue(host)
+	u.Host = types.StringValue(host)
 
 	port := parsed.Port()
-	d.Port = types.StringValue(port)
+	u.Port = types.StringValue(port)
 
 	path := parsed.Path
-	d.Path = types.StringValue(path)
+	u.Path = types.StringValue(path)
 
 	search := renderSearch(parsed)
-	d.Search = types.StringValue(search)
+	u.Search = types.StringValue(search)
 
 	query := parsed.RawQuery
-	d.Query = types.StringValue(query)
+	u.Query = types.StringValue(query)
 
 	fragment := parsed.Fragment
-	d.Fragment = types.StringValue(fragment)
+	u.Fragment = types.StringValue(fragment)
 
 	hash := renderHash(parsed)
-	d.Hash = types.StringValue(hash)
+	u.Hash = types.StringValue(hash)
 
 	return diags
 }

@@ -8,12 +8,13 @@ import (
 )
 
 func TestAccDomainDataSource(t *testing.T) {
-	resourceFqn := "data.url_domain.test"
+	resourceFqn := "data.netparse_domain.test"
 
 	resource.ParallelTest(t, resource.TestCase{
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
+				ResourceName: resourceFqn,
 				Config: testAccDomainDataSource("foo.bar.example.com"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceFqn, "domain", "example.com"),
@@ -25,6 +26,7 @@ func TestAccDomainDataSource(t *testing.T) {
 				),
 			},
 			{
+				ResourceName: resourceFqn,
 				Config: testAccDomainDataSource("foo.example.com"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceFqn, "domain", "example.com"),
@@ -36,6 +38,7 @@ func TestAccDomainDataSource(t *testing.T) {
 				),
 			},
 			{
+				ResourceName: resourceFqn,
 				Config: testAccDomainDataSource("example.com"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceFqn, "domain", "example.com"),
@@ -52,7 +55,7 @@ func TestAccDomainDataSource(t *testing.T) {
 
 func testAccDomainDataSource(host string) string {
 	return fmt.Sprintf(`
-data "url_domain" "test" {
+data "netparse_domain" "test" {
   host = %[1]q
 }
 `, host)

@@ -8,15 +8,15 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
-func TestAccComponentsDataSource(t *testing.T) {
-	resourceFqn := "data.url_components.test"
+func TestAccUrlDataSource(t *testing.T) {
+	resourceFqn := "data.netparse_url.test"
 
 	resource.ParallelTest(t, resource.TestCase{
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				ResourceName: resourceFqn,
-				Config:       testAccComponentsDataSource("https://abc:def@example.com:45/path/to/somewhere?foo=bar&baz=qux#231"),
+				Config:       testAccUrlDataSource("https://abc:def@example.com:45/path/to/somewhere?foo=bar&baz=qux#231"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceFqn, "authority", "abc:def@example.com:45"),
 					resource.TestCheckResourceAttr(resourceFqn, "credentials", "abc:def"),
@@ -36,7 +36,7 @@ func TestAccComponentsDataSource(t *testing.T) {
 			{
 				ResourceName: resourceFqn,
 
-				Config: testAccComponentsDataSource("https://example.com"),
+				Config: testAccUrlDataSource("https://example.com"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceFqn, "authority", "example.com"),
 					resource.TestCheckResourceAttr(resourceFqn, "credentials", ""),
@@ -56,7 +56,7 @@ func TestAccComponentsDataSource(t *testing.T) {
 			{
 				ResourceName: resourceFqn,
 
-				Config: testAccComponentsDataSource("https://user:password@complex-subdomain.example.com:8080/path/to/resource?query1=value1&query2=value2#Section1"),
+				Config: testAccUrlDataSource("https://user:password@complex-subdomain.example.com:8080/path/to/resource?query1=value1&query2=value2#Section1"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceFqn, "authority", "user:password@complex-subdomain.example.com:8080"),
 					resource.TestCheckResourceAttr(resourceFqn, "credentials", "user:password"),
@@ -75,7 +75,7 @@ func TestAccComponentsDataSource(t *testing.T) {
 			},
 			{
 				ResourceName: resourceFqn,
-				Config:       testAccComponentsDataSource("https://example.org/api/v1/search/%E2%9C%93?query=%F0%9F%92%A9&lang=en#results"),
+				Config:       testAccUrlDataSource("https://example.org/api/v1/search/%E2%9C%93?query=%F0%9F%92%A9&lang=en#results"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceFqn, "authority", "example.org"),
 					resource.TestCheckResourceAttr(resourceFqn, "credentials", ""),
@@ -94,16 +94,16 @@ func TestAccComponentsDataSource(t *testing.T) {
 			},
 			{
 				ResourceName: resourceFqn,
-				Config:       testAccComponentsDataSource("://example.com"),
+				Config:       testAccUrlDataSource("://example.com"),
 				ExpectError:  regexp.MustCompile("parse \"://example.com\": missing protocol scheme"),
 			},
 		},
 	})
 }
 
-func testAccComponentsDataSource(host string) string {
+func testAccUrlDataSource(host string) string {
 	return fmt.Sprintf(`
-data "url_components" "test" {
+data "netparse_url" "test" {
   url = %[1]q
 }
 `, host)
