@@ -5,10 +5,18 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"golang.org/x/net/publicsuffix"
+)
+
+const (
+	domainMarkdownDescription        = "Parses Public Suffix List properties from a domain. For more details on the domain parts, see [What is a Domain Name?](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_domain_name)."
+	domainAttrMarkdownDescription    = "The domain name. It's the tld plus one more label. For example: example.com for host foo.example.com"
+	hostAttrMarkdownDescription      = "The host that identifies the domain name"
+	managerAttrMarkdownDescription   = "The manager is the entity that manages the domain. It can be one of the following: ICANN, Private, or None."
+	sldAttrMarkdownDescription       = "The second-level domain (SLD) is the label to the left of the effective TLD. For example: example for example.com, or foo for foo.co.uk"
+	subdomainAttrMarkdownDescription = "The subdomain is the left part of the host that is not the domain. For example: www for www.example.com, mail for mail.foo.org, blog for blog.bar.org"
+	tldAttrMarkdownDescription       = "The effective top-level domain (eTLD) of the domain. This is the public suffix of the domain. For example: com for example.com, or co.uk for foo.co.uk"
 )
 
 // domainDataSourceModel describes the data source data model.
@@ -18,38 +26,37 @@ import (
 // https://github.com/zomasec/tld
 // https://github.com/bobesa/go-domain-util
 // https://github.com/joeguo/tldextract
-type domainDataSourceModel struct {
-	Domain    types.String `tfsdk:"domain"`
-	Host      types.String `tfsdk:"host"`
-	Manager   types.String `tfsdk:"manager"`
-	SLD       types.String `tfsdk:"sld"`
-	Subdomain types.String `tfsdk:"subdomain"`
-	TLD       types.String `tfsdk:"tld"`
+type domainModel struct {
+	Domain    string
+	Host      string
+	Manager   string
+	SLD       string
+	Subdomain string
+	TLD       string
 }
 
-// TODO: Use regexp from `psl.isValid` to validate and remove verification of manager.
-func (d domainDataSourceModel) validate(_ context.Context) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if d.Host.IsUnknown() || d.Host.IsNull() {
-		return diags
-	}
-
-	host := d.Host.ValueString()
-
+func ParseDomain(h string) (*domainModel, error) {
+	host := h
 	eTLD, icann := publicsuffix.PublicSuffix(host)
+	tld := eTLD
 
-	manager := findManager(icann, eTLD)
-
-	if manager == "None" {
-		diags.AddAttributeError(
-			path.Root("host"),
-			"Invalid Attribute Configuration",
-			"Expected host to have as a manager either ICANN or Private.",
-		)
+	sld, err := extractSld(host, eTLD)
+	if err != nil {
+		return nil, err
 	}
 
-	return diags
+	domain := sld + "." + eTLD
+	manager := findManager(icann, eTLD)
+	subdomain := extractSubdomain(host, domain)
+
+	return &domainModel{
+		Domain:    domain,
+		Host:      host,
+		Manager:   manager,
+		SLD:       sld,
+		Subdomain: subdomain,
+		TLD:       tld,
+	}, nil
 }
 
 func findManager(icann bool, eTLD string) string {
@@ -63,34 +70,19 @@ func findManager(icann bool, eTLD string) string {
 	return manager
 }
 
-func (d *domainDataSourceModel) update(_ context.Context) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	host := d.Host.ValueString()
-
-	eTLD, icann := publicsuffix.PublicSuffix(host)
-	d.TLD = types.StringValue(eTLD)
-
-	sld, err := extractSld(host, eTLD)
+func (d *domainDataSourceModel) update(_ context.Context) error {
+	domain, err := ParseDomain(d.Host.ValueString())
 	if err != nil {
-		diags.AddAttributeError(
-			path.Root("sld"),
-			"Invalid Attribute Configuration",
-			err.Error(),
-		)
+		return fmt.Errorf("failed to parse domain: %w", err)
 	}
-	d.SLD = types.StringValue(sld)
 
-	domain := sld + "." + eTLD
-	d.Domain = types.StringValue(domain)
+	d.Domain = types.StringValue(domain.Domain)
+	d.Manager = types.StringValue(domain.Manager)
+	d.SLD = types.StringValue(domain.SLD)
+	d.Subdomain = types.StringValue(domain.Subdomain)
+	d.TLD = types.StringValue(domain.TLD)
 
-	manager := findManager(icann, eTLD)
-	d.Manager = types.StringValue(manager)
-
-	subdomain := extractSubdomain(host, domain)
-	d.Subdomain = types.StringValue(subdomain)
-
-	return diags
+	return nil
 }
 
 func extractSubdomain(host, domain string) string {

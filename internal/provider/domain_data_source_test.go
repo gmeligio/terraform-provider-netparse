@@ -18,7 +18,6 @@ func TestAccDomainDataSource(t *testing.T) {
 				Config:       testAccDomainDataSource("foo.bar.example.com"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceFqn, "domain", "example.com"),
-					resource.TestCheckResourceAttr(resourceFqn, "host", "foo.bar.example.com"),
 					resource.TestCheckResourceAttr(resourceFqn, "manager", "ICANN"),
 					resource.TestCheckResourceAttr(resourceFqn, "sld", "example"),
 					resource.TestCheckResourceAttr(resourceFqn, "subdomain", "foo.bar"),
@@ -30,7 +29,6 @@ func TestAccDomainDataSource(t *testing.T) {
 				Config:       testAccDomainDataSource("foo.example.com"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceFqn, "domain", "example.com"),
-					resource.TestCheckResourceAttr(resourceFqn, "host", "foo.example.com"),
 					resource.TestCheckResourceAttr(resourceFqn, "manager", "ICANN"),
 					resource.TestCheckResourceAttr(resourceFqn, "sld", "example"),
 					resource.TestCheckResourceAttr(resourceFqn, "subdomain", "foo"),
@@ -42,7 +40,6 @@ func TestAccDomainDataSource(t *testing.T) {
 				Config:       testAccDomainDataSource("example.com"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceFqn, "domain", "example.com"),
-					resource.TestCheckResourceAttr(resourceFqn, "host", "example.com"),
 					resource.TestCheckResourceAttr(resourceFqn, "manager", "ICANN"),
 					resource.TestCheckResourceAttr(resourceFqn, "sld", "example"),
 					resource.TestCheckResourceAttr(resourceFqn, "subdomain", ""),

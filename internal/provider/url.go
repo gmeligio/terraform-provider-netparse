@@ -1,141 +1,92 @@
 package provider
 
 import (
-	"context"
-
 	"net/url"
-
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-// urlDataSourceModel describes the data source data model.
+const (
+	urlMarkdownDescription                  = "Parses URL components from a URL string. For more details on the URL components, see [What is a URL?](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_is_a_URL)."
+	urlAttributeMarkdownDescription         = "The URL to parse."
+	authorityAttributeMarkdownDescription   = "The concatenation of the username, password, host, and port. It's separated from the scheme by :// . For example: user1:123@example.com:3000 for http://user1:123@example.com:3000 ."
+	schemeAttributeMarkdownDescription      = "The protocol used to access the domain. For example: http, https, ftp, sftp, file, etc."
+	protocolAttributeMarkdownDescription    = "The concatenation of the scheme and the port. For example: http:, https:, ftp:, sftp:, file:, etc."
+	credentialsAttributeMarkdownDescription = "The concatenation of the username and password. For example: user1:123 for https://user1:123@example.com ."
+	usernameAttributeMarkdownDescription    = "The first component of the URL credentials. For example: user1 for https://user1:123@example.com ."
+	passwordAttributeMarkdownDescription    = "The second component of the URL credentials. For example: 123 for https://user1:123@example.com ."
+	hostAttributeMarkdownDescription        = "The domain part of the authority. For example: example.com for https://example.com ."
+	portAttributeMarkdownDescription        = "The last component of the URL authority. For example: 443 for https://example.com:443 ."
+	pathAttributeMarkdownDescription        = "The URL component after the authority. For example: /path/to/resource for https://example.com/path/to/resource ."
+	searchAttributeMarkdownDescription      = "The URL component after the path. For example: ?key=value for https://example.com/path/to/resource?key=value ."
+	queryAttributeMarkdownDescription       = "The URL component of the search starting at the ? and before the fragment. For example: key=value for https://example.com/path/to/resource?key=value#section ."
+	fragmentAttributeMarkdownDescription    = "The URL component after the search. For example: section for https://example.com/path/to/resource?key=value#section ."
+	hashAttributeMarkdownDescription        = "The concatenation of a # with the fragment. For example: #section for https://example.com/path/to/resource?key=value#section ."
+)
+
+// urlModel describes the data source data model.
 // References used.
 // https://registry.terraform.io/modules/matti/urlparse/external/latest
 // https://registry.terraform.io/providers/northwood-labs/corefunc/latest/docs/data-sources/url_parse
-type urlDataSourceModel struct {
-	Url         types.String `tfsdk:"url"`
-	Authority   types.String `tfsdk:"authority"`
-	Protocol    types.String `tfsdk:"protocol"`
-	Scheme      types.String `tfsdk:"scheme"`
-	Credentials types.String `tfsdk:"credentials"`
-	Username    types.String `tfsdk:"username"`
-	Password    types.String `tfsdk:"password"`
-	Host        types.String `tfsdk:"host"`
-	Port        types.String `tfsdk:"port"`
-	Path        types.String `tfsdk:"path"`
-	Search      types.String `tfsdk:"search"`
-	Query       types.String `tfsdk:"query"`
-	Hash        types.String `tfsdk:"hash"`
-	Fragment    types.String `tfsdk:"fragment"`
+type urlModel struct {
+	Url         string
+	Authority   string
+	Protocol    string
+	Scheme      string
+	Credentials string
+	Username    string
+	Password    string
+	Host        string
+	Port        string
+	Path        string
+	Search      string
+	Query       string
+	Hash        string
+	Fragment    string
 }
 
-func (u urlDataSourceModel) validate(_ context.Context) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	// if d.Host.IsUnknown() || d.Host.IsNull() {
-	// 	return diags
-	// }
-
-	// host := d.Host.ValueString()
-
-	// eTLD, icann := publicsuffix.PublicSuffix(host)
-
-	// manager := findManager(icann, eTLD)
-
-	// if manager == "None" {
-	// 	diags.AddAttributeError(
-	// 		path.Root("host"),
-	// 		"Invalid Attribute Configuration",
-	// 		"Expected host to have as a manager either ICANN or Private.",
-	// 	)
-	// }
-
-	return diags
-}
-
-func (u *urlDataSourceModel) update(_ context.Context) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	// host := d.Host.ValueString()
-
-	// eTLD, icann := publicsuffix.PublicSuffix(host)
-	// d.TLD = types.StringValue(eTLD)
-
-	// sld, err := extractSld(host, eTLD)
-	// if err != nil {
-	// 	diags.AddAttributeError(
-	// 		path.Root("sld"),
-	// 		"Invalid Attribute Configuration",
-	// 		err.Error(),
-	// 	)
-	// }
-	// d.SLD = types.StringValue(sld)
-
-	// domain := sld + "." + eTLD
-	// d.Domain = types.StringValue(domain)
-
-	// manager := findManager(icann, eTLD)
-	// d.Manager = types.StringValue(manager)
-
-	// subdomain := extractSubdomain(host, domain)
-	// d.Subdomain = types.StringValue(subdomain)
-
-	rawURL := u.Url.ValueString()
-
-	parsed, err := url.Parse(rawURL)
+func ParseUrl(u string) (*urlModel, error) {
+	internalUrl, err := url.Parse(u)
 	if err != nil {
-		diags.AddError(
-			"Invalid URL",
-			err.Error(),
-		)
-		return diags
+		return nil, err
 	}
 
-	authority := renderAuthority(parsed)
-	u.Authority = types.StringValue(authority)
-
-	scheme := parsed.Scheme
-	u.Scheme = types.StringValue(scheme)
-
+	authority := renderAuthority(internalUrl)
+	scheme := internalUrl.Scheme
 	protocol := scheme + ":"
-	u.Protocol = types.StringValue(protocol)
+	credentials := internalUrl.User.String()
+	username := internalUrl.User.Username()
+	password, _ := internalUrl.User.Password()
+	host := internalUrl.Hostname()
+	port := internalUrl.Port()
+	path := internalUrl.Path
+	search := renderSearch(internalUrl)
+	query := internalUrl.RawQuery
+	fragment := internalUrl.Fragment
+	hash := renderHash(internalUrl)
 
-	credentials := parsed.User.String()
-	u.Credentials = types.StringValue(credentials)
-
-	username := parsed.User.Username()
-	u.Username = types.StringValue(username)
-
-	password, _ := parsed.User.Password()
-	u.Password = types.StringValue(password)
-
-	host := parsed.Hostname()
-	u.Host = types.StringValue(host)
-
-	port := parsed.Port()
-	u.Port = types.StringValue(port)
-
-	path := parsed.Path
-	u.Path = types.StringValue(path)
-
-	search := renderSearch(parsed)
-	u.Search = types.StringValue(search)
-
-	query := parsed.RawQuery
-	u.Query = types.StringValue(query)
-
-	fragment := parsed.Fragment
-	u.Fragment = types.StringValue(fragment)
-
-	hash := renderHash(parsed)
-	u.Hash = types.StringValue(hash)
-
-	return diags
+	return &urlModel{
+		Url:         u,
+		Authority:   authority,
+		Protocol:    protocol,
+		Scheme:      scheme,
+		Credentials: credentials,
+		Username:    username,
+		Password:    password,
+		Host:        host,
+		Port:        port,
+		Path:        path,
+		Search:      search,
+		Query:       query,
+		Hash:        hash,
+		Fragment:    fragment,
+	}, nil
 }
 
-func renderHash(parsed *url.URL) string {
-	fragment := parsed.Fragment
+func (u *urlModel) validate() error {
+	return nil
+}
+
+func renderHash(u *url.URL) string {
+	fragment := u.Fragment
 	if fragment == "" {
 		return ""
 	}
@@ -143,8 +94,8 @@ func renderHash(parsed *url.URL) string {
 	return "#" + fragment
 }
 
-func renderSearch(parsed *url.URL) string {
-	query := parsed.RawQuery
+func renderSearch(u *url.URL) string {
+	query := u.RawQuery
 	if query == "" {
 		return ""
 	}
@@ -152,9 +103,9 @@ func renderSearch(parsed *url.URL) string {
 	return "?" + query
 }
 
-func renderAuthority(parsed *url.URL) string {
-	credentials := parsed.User.String()
-	port := parsed.Port()
+func renderAuthority(u *url.URL) string {
+	credentials := u.User.String()
+	port := u.Port()
 
 	var credentialsComponent string
 	if credentials != "" {
@@ -166,5 +117,5 @@ func renderAuthority(parsed *url.URL) string {
 		portComponent = ":" + port
 	}
 
-	return credentialsComponent + parsed.Hostname() + portComponent
+	return credentialsComponent + u.Hostname() + portComponent
 }

@@ -5,17 +5,29 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+	"golang.org/x/net/publicsuffix"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ datasource.DataSource = &domainDataSource{}
 
-func NewDomainDataSource() datasource.DataSource {
-	return &domainDataSource{}
+// domainDataSource defines the data source implementation.
+type domainDataSource struct{}
+
+type domainDataSourceModel struct {
+	Domain    types.String `tfsdk:"domain"`
+	Host      types.String `tfsdk:"host"`
+	Manager   types.String `tfsdk:"manager"`
+	SLD       types.String `tfsdk:"sld"`
+	Subdomain types.String `tfsdk:"subdomain"`
+	TLD       types.String `tfsdk:"tld"`
 }
 
-// domainDataSource defines the data source implementation.
-type domainDataSource struct {
+func NewDomainDataSource() datasource.DataSource {
+	return &domainDataSource{}
 }
 
 func (d *domainDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -37,31 +49,31 @@ func (d *domainDataSource) ValidateConfig(ctx context.Context, req datasource.Va
 
 func (d *domainDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		MarkdownDescription: "Parses Public Suffix List properties from a domain",
+		MarkdownDescription: domainMarkdownDescription,
 
 		Attributes: map[string]schema.Attribute{
 			"domain": schema.StringAttribute{
-				MarkdownDescription: "The domain name. It's the tld plus one more label. For example: example.com for host foo.example.com",
+				MarkdownDescription: domainAttrMarkdownDescription,
 				Computed:            true,
 			},
 			"host": schema.StringAttribute{
-				MarkdownDescription: "The host that identifies the domain name",
+				MarkdownDescription: hostAttrMarkdownDescription,
 				Required:            true,
 			},
 			"manager": schema.StringAttribute{
-				MarkdownDescription: "The manager is the entity that manages the domain. It can be one of the following: ICANN, Private, or None.",
+				MarkdownDescription: managerAttrMarkdownDescription,
 				Computed:            true,
 			},
 			"sld": schema.StringAttribute{
-				MarkdownDescription: "The second-level domain (SLD) is the label to the left of the effective TLD. For example: example for example.com, or foo for foo.co.uk",
+				MarkdownDescription: sldAttrMarkdownDescription,
 				Computed:            true,
 			},
 			"subdomain": schema.StringAttribute{
-				MarkdownDescription: "The subdomain is the left part of the host that is not the domain. For example: www for www.example.com, mail for mail.foo.org, blog for blog.bar.org",
+				MarkdownDescription: subdomainAttrMarkdownDescription,
 				Computed:            true,
 			},
 			"tld": schema.StringAttribute{
-				MarkdownDescription: "The effective top-level domain (eTLD) of the domain. This is the public suffix of the domain. For example: com for example.com, or co.uk for foo.co.uk",
+				MarkdownDescription: tldAttrMarkdownDescription,
 				Computed:            true,
 			},
 		},
@@ -79,9 +91,36 @@ func (d *domainDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		return
 	}
 
-	diags = data.update(ctx)
-	resp.Diagnostics.Append(diags...)
+	err := data.update(ctx)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to update data", err.Error())
+	}
 
 	diags = resp.State.Set(ctx, &data)
 	resp.Diagnostics.Append(diags...)
+}
+
+// TODO: Use regexp from `psl.isValid` to validate and remove verification of manager.
+func (d domainDataSourceModel) validate(_ context.Context) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if d.Host.IsUnknown() || d.Host.IsNull() {
+		return diags
+	}
+
+	host := d.Host.ValueString()
+
+	eTLD, icann := publicsuffix.PublicSuffix(host)
+
+	manager := findManager(icann, eTLD)
+
+	if manager == "None" {
+		diags.AddAttributeError(
+			path.Root("host"),
+			"Invalid Attribute Configuration",
+			"Expected host to have as a manager either ICANN or Private.",
+		)
+	}
+
+	return diags
 }
