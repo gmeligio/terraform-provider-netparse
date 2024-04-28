@@ -17,20 +17,20 @@ Parses URL components from a URL string.
 
 ### Required
 
-- `url` (String) The URL to parse
+- `url` (String) The URL to parse.
 
 ### Read-Only
 
-- `authority` (String) The concatenation of the username, password, host, and port. It's separated from the scheme by :// . For example: user1:123@example.com:3000 for http://user1:123@example.com:3000
-- `credentials` (String) The concatenation of the username and password. For example: user1:123 for https://user1:123@example.com
-- `fragment` (String) The URL component after the search. For example: section for https://example.com/path/to/resource?key=value#section
-- `hash` (String) The concatenation of a # with the fragment. For example: #section for https://example.com/path/to/resource?key=value#section
-- `host` (String) The domain part of the authority. For example: example.com for https://example.com
-- `password` (String) The second component of the URL credentials. For example: 123 for https://user1:123@example.com
-- `path` (String) The URL component after the authority. For example: /path/to/resource for https://example.com/path/to/resource
-- `port` (String) The last component of the URL authority. For example: 443 for https://example.com:443
+- `authority` (String) The concatenation of the username, password, host, and port. It's separated from the scheme by :// . For example: user1:123@example.com:3000 for http://user1:123@example.com:3000 .
+- `credentials` (String) The concatenation of the username and password. For example: user1:123 for https://user1:123@example.com .
+- `fragment` (String) The URL component after the search. For example: section for https://example.com/path/to/resource?key=value#section .
+- `hash` (String) The concatenation of a # with the fragment. For example: #section for https://example.com/path/to/resource?key=value#section .
+- `host` (String) The domain part of the authority. For example: example.com for https://example.com .
+- `password` (String, Sensitive) The second component of the URL credentials. For example: 123 for https://user1:123@example.com .
+- `path` (String) The URL component after the authority. For example: /path/to/resource for https://example.com/path/to/resource .
+- `port` (String) The last component of the URL authority. For example: 443 for https://example.com:443 .
 - `protocol` (String) The concatenation of the scheme and the port. For example: http:, https:, ftp:, sftp:, file:, etc.
-- `query` (String) The URL component of the search starting at the ? and before the fragment. For example: key=value for https://example.com/path/to/resource?key=value#section
+- `query` (String) The URL component of the search starting at the ? and before the fragment. For example: key=value for https://example.com/path/to/resource?key=value#section .
 - `scheme` (String) The protocol used to access the domain. For example: http, https, ftp, sftp, file, etc.
-- `search` (String) The URL component after the path. For example: ?key=value for https://example.com/path/to/resource?key=value
-- `username` (String) The first component of the URL credentials. For example: user1 for https://user1:123@example.com
+- `search` (String) The URL component after the path. For example: ?key=value for https://example.com/path/to/resource?key=value .
+- `username` (String, Sensitive) The first component of the URL credentials. For example: user1 for https://user1:123@example.com .

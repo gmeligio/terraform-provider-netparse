@@ -8,15 +8,20 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
-func TestAccUrlDataSource(t *testing.T) {
-	resourceFqn := "data.netparse_url.test"
+const resourceFqn = "data.netparse_url.test"
 
+func TestAccUrlDataSource_basic(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
 				ResourceName: resourceFqn,
-				Config:       testAccUrlDataSource("https://abc:def@example.com:45/path/to/somewhere?foo=bar&baz=qux#231"),
+				Config:       testAccUrlDataSourceConfig_basic("://example.com"),
+				ExpectError:  regexp.MustCompile("missing protocol scheme"),
+			},
+			{
+				ResourceName: resourceFqn,
+				Config:       testAccUrlDataSourceConfig_basic("https://abc:def@example.com:45/path/to/somewhere?foo=bar&baz=qux#231"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceFqn, "authority", "abc:def@example.com:45"),
 					resource.TestCheckResourceAttr(resourceFqn, "credentials", "abc:def"),
@@ -36,7 +41,7 @@ func TestAccUrlDataSource(t *testing.T) {
 			{
 				ResourceName: resourceFqn,
 
-				Config: testAccUrlDataSource("https://example.com"),
+				Config: testAccUrlDataSourceConfig_basic("https://example.com"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceFqn, "authority", "example.com"),
 					resource.TestCheckResourceAttr(resourceFqn, "credentials", ""),
@@ -56,7 +61,7 @@ func TestAccUrlDataSource(t *testing.T) {
 			{
 				ResourceName: resourceFqn,
 
-				Config: testAccUrlDataSource("https://user:password@complex-subdomain.example.com:8080/path/to/resource?query1=value1&query2=value2#Section1"),
+				Config: testAccUrlDataSourceConfig_basic("https://user:password@complex-subdomain.example.com:8080/path/to/resource?query1=value1&query2=value2#Section1"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceFqn, "authority", "user:password@complex-subdomain.example.com:8080"),
 					resource.TestCheckResourceAttr(resourceFqn, "credentials", "user:password"),
@@ -75,7 +80,7 @@ func TestAccUrlDataSource(t *testing.T) {
 			},
 			{
 				ResourceName: resourceFqn,
-				Config:       testAccUrlDataSource("https://example.org/api/v1/search/%E2%9C%93?query=%F0%9F%92%A9&lang=en#results"),
+				Config:       testAccUrlDataSourceConfig_basic("https://example.org/api/v1/search/%E2%9C%93?query=%F0%9F%92%A9&lang=en#results"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceFqn, "authority", "example.org"),
 					resource.TestCheckResourceAttr(resourceFqn, "credentials", ""),
@@ -92,16 +97,11 @@ func TestAccUrlDataSource(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceFqn, "username", ""),
 				),
 			},
-			{
-				ResourceName: resourceFqn,
-				Config:       testAccUrlDataSource("://example.com"),
-				ExpectError:  regexp.MustCompile("parse \"://example.com\": missing protocol scheme"),
-			},
 		},
 	})
 }
 
-func testAccUrlDataSource(host string) string {
+func testAccUrlDataSourceConfig_basic(host string) string {
 	return fmt.Sprintf(`
 data "netparse_url" "test" {
   url = %[1]q
