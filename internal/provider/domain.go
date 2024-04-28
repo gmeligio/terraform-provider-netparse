@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	domainMarkdownDescription        = "Parses Public Suffix List properties from a domain"
+	domainMarkdownDescription        = "Parses Public Suffix List properties from a domain. For more details on the domain parts, see [What is a Domain Name?](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_domain_name)."
 	domainAttrMarkdownDescription    = "The domain name. It's the tld plus one more label. For example: example.com for host foo.example.com"
 	hostAttrMarkdownDescription      = "The host that identifies the domain name"
 	managerAttrMarkdownDescription   = "The manager is the entity that manages the domain. It can be one of the following: ICANN, Private, or None."

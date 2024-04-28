@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	urlMarkdownDescription                  = "Parses URL components from a URL string."
+	urlMarkdownDescription                  = "Parses URL components from a URL string. For more details on the URL components, see [What is a URL?](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_is_a_URL)."
 	urlAttributeMarkdownDescription         = "The URL to parse."
 	authorityAttributeMarkdownDescription   = "The concatenation of the username, password, host, and port. It's separated from the scheme by :// . For example: user1:123@example.com:3000 for http://user1:123@example.com:3000 ."
 	schemeAttributeMarkdownDescription      = "The protocol used to access the domain. For example: http, https, ftp, sftp, file, etc."

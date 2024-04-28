@@ -3,12 +3,12 @@
 page_title: "parse_url function - netparse"
 subcategory: ""
 description: |-
-  Parses URL components from a URL string.
+  Parses URL components from a URL string. For more details on the URL components, see What is a URL? https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_is_a_URL.
 ---
 
 # function: parse_url
 
-Parses URL components from a URL string.
+Parses URL components from a URL string. For more details on the URL components, see [What is a URL?](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_is_a_URL).
 
 
 

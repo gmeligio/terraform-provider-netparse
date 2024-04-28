@@ -3,12 +3,12 @@
 page_title: "netparse_domain Data Source - netparse"
 subcategory: ""
 description: |-
-  Parses Public Suffix List properties from a domain
+  Parses Public Suffix List properties from a domain. For more details on the domain parts, see What is a Domain Name? https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_domain_name.
 ---
 
 # netparse_domain (Data Source)
 
-Parses Public Suffix List properties from a domain
+Parses Public Suffix List properties from a domain. For more details on the domain parts, see [What is a Domain Name?](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_domain_name).
 
 
 

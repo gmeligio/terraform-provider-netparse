@@ -3,12 +3,12 @@
 page_title: "netparse_url Data Source - netparse"
 subcategory: ""
 description: |-
-  Parses URL components from a URL string.
+  Parses URL components from a URL string. For more details on the URL components, see What is a URL? https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_is_a_URL.
 ---
 
 # netparse_url (Data Source)
 
-Parses URL components from a URL string.
+Parses URL components from a URL string. For more details on the URL components, see [What is a URL?](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_is_a_URL).
 
 
 
