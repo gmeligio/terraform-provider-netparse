@@ -10,13 +10,13 @@ import (
 )
 
 const (
-	domainMarkdownDescription = "Parses Public Suffix List properties from a domain"
-	domainAttrMarkdownDescription = "The domain name. It's the tld plus one more label. For example: example.com for host foo.example.com"
-	hostAttrMarkdownDescription = "The host that identifies the domain name"
-	managerAttrMarkdownDescription = "The manager is the entity that manages the domain. It can be one of the following: ICANN, Private, or None."
-	sldAttrMarkdownDescription = "The second-level domain (SLD) is the label to the left of the effective TLD. For example: example for example.com, or foo for foo.co.uk"
+	domainMarkdownDescription        = "Parses Public Suffix List properties from a domain"
+	domainAttrMarkdownDescription    = "The domain name. It's the tld plus one more label. For example: example.com for host foo.example.com"
+	hostAttrMarkdownDescription      = "The host that identifies the domain name"
+	managerAttrMarkdownDescription   = "The manager is the entity that manages the domain. It can be one of the following: ICANN, Private, or None."
+	sldAttrMarkdownDescription       = "The second-level domain (SLD) is the label to the left of the effective TLD. For example: example for example.com, or foo for foo.co.uk"
 	subdomainAttrMarkdownDescription = "The subdomain is the left part of the host that is not the domain. For example: www for www.example.com, mail for mail.foo.org, blog for blog.bar.org"
-	tldAttrMarkdownDescription = "The effective top-level domain (eTLD) of the domain. This is the public suffix of the domain. For example: com for example.com, or co.uk for foo.co.uk"
+	tldAttrMarkdownDescription       = "The effective top-level domain (eTLD) of the domain. This is the public suffix of the domain. For example: com for example.com, or co.uk for foo.co.uk"
 )
 
 // domainDataSourceModel describes the data source data model.
@@ -39,7 +39,7 @@ func ParseDomain(h string) (*domainModel, error) {
 	host := h
 	eTLD, icann := publicsuffix.PublicSuffix(host)
 	tld := eTLD
-	
+
 	sld, err := extractSld(host, eTLD)
 	if err != nil {
 		return nil, err
@@ -71,7 +71,7 @@ func findManager(icann bool, eTLD string) string {
 }
 
 func (d *domainDataSourceModel) update(_ context.Context) error {
-	domain, err := ParseDomain(string(d.Host.ValueString()))
+	domain, err := ParseDomain(d.Host.ValueString())
 	if err != nil {
 		return fmt.Errorf("failed to parse domain: %w", err)
 	}
