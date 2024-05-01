@@ -1,3 +1,5 @@
+[![Terraform Registry](https://img.shields.io/github/v/release/gmeligio/terraform-provider-netparse?label=Terraform%20Registry)](https://registry.terraform.io/providers/gmeligio/netparse)
+
 # Terraform Provider: netparse
 
 ## Using the provider

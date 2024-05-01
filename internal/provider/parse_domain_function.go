@@ -11,13 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var (
-	_ function.Function = ParseDomainFunction{}
-)
-
-func NewParseDomainFunction() function.Function {
-	return ParseDomainFunction{}
-}
+var _ function.Function = ParseDomainFunction{}
 
 type ParseDomainFunction struct{}
 
@@ -28,6 +22,10 @@ type parseDomainFunctionReturnModel struct {
 	SLD       string `tfsdk:"sld"`
 	Subdomain string `tfsdk:"subdomain"`
 	TLD       string `tfsdk:"tld"`
+}
+
+func NewParseDomainFunction() function.Function {
+	return ParseDomainFunction{}
 }
 
 func FromDomainModel(d *domainModel) parseDomainFunctionReturnModel {
