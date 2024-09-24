@@ -6,4 +6,4 @@ description: |-
 
 # netparse Provider
 
-The netparse provider is used to interact with networking elements, like URLs and domains. It uses the [net/url](https://pkg.go.dev/net/url) go library to parse URLs and the [publicsuffix](https://pkg.go.dev/golang.org/x/net/publicsuffix) go library to parse domains.
+The netparse provider is used to parse networking elements, like URLs and domains. It uses `go` packages internally that implement the standard specification.

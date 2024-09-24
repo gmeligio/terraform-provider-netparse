@@ -2,7 +2,9 @@ package provider
 
 import (
 	"context"
+	"fmt"
 
+	"github.com/gmeligio/terraform-provider-netparse/internal/netparse"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -11,12 +13,23 @@ import (
 	"golang.org/x/net/publicsuffix"
 )
 
+const (
+	domainMarkdownDescription        = "Parses Public Suffix List properties from a domain. It uses the [publicsuffix](https://pkg.go.dev/golang.org/x/net/publicsuffix) go package to parse the domain. For more details on the domain parts, see [What is a Domain Name?](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_domain_name)."
+	domainAttrMarkdownDescription    = "The domain name. It's the tld plus one more label."
+	hostAttrMarkdownDescription      = "The host that identifies the domain name."
+	managerAttrMarkdownDescription   = "The manager is the entity that manages the domain. It can be one of: ICANN, Private, or None."
+	sldAttrMarkdownDescription       = "The second-level domain (SLD) is the label to the left of the effective TLD."
+	subdomainAttrMarkdownDescription = "The subdomain is the left part of the host that is not the domain."
+	tldAttrMarkdownDescription       = "The effective top-level domain (eTLD) of the domain. This is the public suffix of the domain."
+)
+
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ datasource.DataSource = &domainDataSource{}
 
 // domainDataSource defines the data source implementation.
 type domainDataSource struct{}
 
+// domainDataSourceModel describes the data source model.
 type domainDataSourceModel struct {
 	Domain    types.String `tfsdk:"domain"`
 	Host      types.String `tfsdk:"host"`
@@ -104,15 +117,23 @@ func (d *domainDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 func (d domainDataSourceModel) validate(_ context.Context) diag.Diagnostics {
 	var diags diag.Diagnostics
 
-	if d.Host.IsUnknown() || d.Host.IsNull() {
+	if d.Host.IsUnknown(){
 		return diags
+	}
+
+	if d.Host.IsNull() {
+		diags.AddAttributeError(
+			path.Root("host"),
+			"Invalid Attribute Configuration",
+			"Expected host to be non-null. Received a null value.",
+		)
 	}
 
 	host := d.Host.ValueString()
 
 	eTLD, icann := publicsuffix.PublicSuffix(host)
 
-	manager := findManager(icann, eTLD)
+	manager := netparse.FindManager(icann, eTLD)
 
 	if manager == "None" {
 		diags.AddAttributeError(
@@ -123,4 +144,19 @@ func (d domainDataSourceModel) validate(_ context.Context) diag.Diagnostics {
 	}
 
 	return diags
+}
+
+func (d *domainDataSourceModel) update(_ context.Context) error {
+	domain, err := netparse.ParseDomain(d.Host.ValueString())
+	if err != nil {
+		return fmt.Errorf("failed to parse domain: %w", err)
+	}
+
+	d.Domain = types.StringValue(domain.Domain)
+	d.Manager = types.StringValue(domain.Manager)
+	d.SLD = types.StringValue(domain.SLD)
+	d.Subdomain = types.StringValue(domain.Subdomain)
+	d.TLD = types.StringValue(domain.TLD)
+
+	return nil
 }

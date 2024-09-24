@@ -6,6 +6,7 @@ package provider
 import (
 	"context"
 
+	"github.com/gmeligio/terraform-provider-netparse/internal/netparse"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/function"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -28,7 +29,7 @@ func NewParseDomainFunction() function.Function {
 	return ParseDomainFunction{}
 }
 
-func FromDomainModel(d *domainModel) parseDomainFunctionReturnModel {
+func FromDomainModel(d *netparse.DomainModel) parseDomainFunctionReturnModel {
 	return parseDomainFunctionReturnModel{
 		Domain:    d.Domain,
 		Host:      d.Host,
@@ -76,7 +77,7 @@ func (f ParseDomainFunction) Run(ctx context.Context, req function.RunRequest, r
 		return
 	}
 
-	domainModel, err := ParseDomain(host)
+	DomainModel, err := netparse.ParseDomain(host)
 	if err != nil {
 		resp.Error = function.ConcatFuncErrors(
 			function.NewFuncError(err.Error()),
@@ -84,7 +85,7 @@ func (f ParseDomainFunction) Run(ctx context.Context, req function.RunRequest, r
 		return
 	}
 
-	result := FromDomainModel(domainModel)
+	result := FromDomainModel(DomainModel)
 
 	resp.Error = function.ConcatFuncErrors(resp.Result.Set(ctx, result))
 }

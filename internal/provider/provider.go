@@ -42,6 +42,7 @@ func (p *NetparseProvider) DataSources(ctx context.Context) []func() datasource.
 	return []func() datasource.DataSource{
 		NewUrlDataSource,
 		NewDomainDataSource,
+		NewCIDRDataSource,
 	}
 }
 

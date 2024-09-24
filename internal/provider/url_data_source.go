@@ -4,12 +4,32 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/gmeligio/terraform-provider-netparse/internal/netparse"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
+
+const (
+	urlMarkdownDescription                  = "Parses URL components from a URL string. It uses the [net/url](https://pkg.go.dev/net/url) go package to parse the URL. For more details on the URL components, see [What is a URL?](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_is_a_URL)."
+	urlAttributeMarkdownDescription         = "The URL to parse."
+	authorityAttributeMarkdownDescription   = "The concatenation of the username, password, host, and port. It's separated from the scheme by :// . For example: user1:123@example.com:3000 for http://user1:123@example.com:3000 ."
+	schemeAttributeMarkdownDescription      = "The protocol used to access the domain. For example: http, https, ftp, sftp, file, etc."
+	protocolAttributeMarkdownDescription    = "The concatenation of the scheme and the port. For example: http:, https:, ftp:, sftp:, file:, etc."
+	credentialsAttributeMarkdownDescription = "The concatenation of the username and password. For example: user1:123 for https://user1:123@example.com ."
+	usernameAttributeMarkdownDescription    = "The first component of the URL credentials. For example: user1 for https://user1:123@example.com ."
+	passwordAttributeMarkdownDescription    = "The second component of the URL credentials. For example: 123 for https://user1:123@example.com ."
+	hostAttributeMarkdownDescription        = "The domain part of the authority. For example: example.com for https://example.com ."
+	portAttributeMarkdownDescription        = "The last component of the URL authority. For example: 443 for https://example.com:443 ."
+	pathAttributeMarkdownDescription        = "The URL component after the authority. For example: /path/to/resource for https://example.com/path/to/resource ."
+	searchAttributeMarkdownDescription      = "The URL component after the path. For example: ?key=value for https://example.com/path/to/resource?key=value ."
+	queryAttributeMarkdownDescription       = "The URL component of the search starting at the ? and before the fragment. For example: key=value for https://example.com/path/to/resource?key=value#section ."
+	fragmentAttributeMarkdownDescription    = "The URL component after the search. For example: section for https://example.com/path/to/resource?key=value#section ."
+	hashAttributeMarkdownDescription        = "The concatenation of a # with the fragment. For example: #section for https://example.com/path/to/resource?key=value#section ."
+)
+
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ datasource.DataSource = &urlDataSource{}
@@ -157,7 +177,11 @@ func (u *urlDataSource) Read(ctx context.Context, req datasource.ReadRequest, re
 func (u *urlDataSourceModel) validate(ctx context.Context) diag.Diagnostics {
 	var diags diag.Diagnostics
 
-	url, err := ParseUrl(u.Url.ValueString())
+	if u.Url.IsUnknown() {
+		return diags
+	}
+
+	url, err := netparse.ParseUrl(u.Url.ValueString())
 	if err != nil {
 		diags.AddError("failed to parse URL", err.Error())
 	}
@@ -166,7 +190,7 @@ func (u *urlDataSourceModel) validate(ctx context.Context) diag.Diagnostics {
 		"url": url,
 	})
 
-	err = url.validate()
+	err = url.Validate()
 	if err != nil {
 		diags.AddError("failed to validate URL", err.Error())
 	}
@@ -175,7 +199,7 @@ func (u *urlDataSourceModel) validate(ctx context.Context) diag.Diagnostics {
 }
 
 func (u *urlDataSourceModel) update(_ context.Context) error {
-	url, err := ParseUrl(u.Url.ValueString())
+	url, err := netparse.ParseUrl(u.Url.ValueString())
 	if err != nil {
 		return fmt.Errorf("failed to parse URL: %w", err)
 	}

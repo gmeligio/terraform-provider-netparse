@@ -6,6 +6,7 @@ package provider
 import (
 	"context"
 
+	"github.com/gmeligio/terraform-provider-netparse/internal/netparse"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/function"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -35,7 +36,7 @@ func NewParseUrlFunction() function.Function {
 	return ParseUrlFunction{}
 }
 
-func FromUrlModel(u *urlModel) parseUrlFunctionReturnModel {
+func FromUrlModel(u *netparse.UrlModel) parseUrlFunctionReturnModel {
 	return parseUrlFunctionReturnModel{
 		Authority:   u.Authority,
 		Protocol:    u.Protocol,
@@ -97,7 +98,7 @@ func (f ParseUrlFunction) Run(ctx context.Context, req function.RunRequest, resp
 		return
 	}
 
-	urlModel, err := ParseUrl(url)
+	urlModel, err := netparse.ParseUrl(url)
 	if err != nil {
 		resp.Error = function.ConcatFuncErrors(
 			function.NewFuncError(err.Error()),
