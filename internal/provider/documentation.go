@@ -38,9 +38,13 @@ var parseCIDRMarkdownDescription = describeFunction(cidrMarkdownDescription, cid
 
 const (
 	cidrMarkdownDescription        = "Parses an IP address and prefix length in CIDR notation as defined in [RFC 4632](https://rfc-editor.org/rfc/rfc4632.html) and [RFC 4291](https://rfc-editor.org/rfc/rfc4291.html)."
-	cidrAttrMarkdownDescription    = "IP address and prefix length in CIDR notation."
-	ipAttrMarkdownDescription    = "IP address."
-	networkAttrMarkdownDescription    = "IP network."
+	cidrAttrMarkdownDescription    = "The IP address and prefix length in CIDR notation."
+	ipAttrMarkdownDescription      = "The IP address."
+	networkAttrMarkdownDescription = "The IP network."
+)
+
+const (
+	containsIPMarkdownDescription = "Checks if an IP address is within a network."
 )
 
 func describeFunction(dataSourceDescription string, functionTypeName string) string {

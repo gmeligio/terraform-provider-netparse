@@ -1,6 +1,7 @@
 package netparse
 
 import (
+	"fmt"
 	"net"
 )
 
@@ -36,6 +37,16 @@ func CidrValidate(u string) error {
 	return nil
 }
 
-func ContainsIp(network string, ip string) (*DomainModel, error) {
-	return nil, nil
+func ContainsIP(network string, ip string) (bool, error) {
+	_, parsedNetwork, err := net.ParseCIDR(network)
+	if err != nil {
+		return false, err
+	}
+	
+	parsedIP := net.ParseIP(ip)
+	if parsedIP == nil {
+		return false, fmt.Errorf("failed to parse IP address: %s", ip)
+	}
+
+	return parsedNetwork.Contains(parsedIP), nil
 }

@@ -47,9 +47,9 @@ output "cidr2" {
 
 ### Required
 
-- `cidr` (String) IP address and prefix length in CIDR notation.
+- `cidr` (String) The IP address and prefix length in CIDR notation.
 
 ### Read-Only
 
-- `ip` (String) IP address.
-- `network` (String) IP network.
+- `ip` (String) The IP address.
+- `network` (String) The IP network.

@@ -101,10 +101,10 @@ func TestAccURLDataSource_basic(t *testing.T) {
 	})
 }
 
-func testAccURLDataSourceConfig_basic(host string) string {
+func testAccURLDataSourceConfig_basic(url string) string {
 	return fmt.Sprintf(`
 data "netparse_url" "test" {
   url = %[1]q
 }
-`, host)
+`, url)
 }

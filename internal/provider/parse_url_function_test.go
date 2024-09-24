@@ -145,10 +145,10 @@ func TestParseURLFunction_Unknown(t *testing.T) {
 	})
 }
 
-func testAccParseURLFunctionConfig_basic(host string) string {
+func testAccParseURLFunctionConfig_basic(url string) string {
 	return fmt.Sprintf(`
 output "test" {
 	value = provider::netparse::parse_url(%[1]q)
 }
-`, host)
+`, url)
 }

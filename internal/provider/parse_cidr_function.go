@@ -73,7 +73,7 @@ func (f ParseCIDRFunction) Run(ctx context.Context, req function.RunRequest, res
 		return
 	}
 
-	result := FromCIDRModel(cidrModel)
+	result := ContainsIPFromCIDRModel(cidrModel)
 
 	resp.Error = function.ConcatFuncErrors(resp.Result.Set(ctx, result))
 }

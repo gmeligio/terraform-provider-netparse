@@ -55,6 +55,7 @@ func (p *NetparseProvider) Functions(ctx context.Context) []func() function.Func
 		NewParseURLFunction,
 		NewParseDomainFunction,
 		NewParseCIDRFunction,
+		NewContainsIPFunction,
 	}
 }
 
