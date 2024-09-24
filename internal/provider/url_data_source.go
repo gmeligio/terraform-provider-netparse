@@ -48,19 +48,6 @@ func (u *urlDataSource) Metadata(ctx context.Context, req datasource.MetadataReq
 	resp.TypeName = req.ProviderTypeName + "_url"
 }
 
-// func (u *urlDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
-// 	var data urlDataSourceModel
-
-// 	diags := req.Config.Get(ctx, &data)
-// 	resp.Diagnostics.Append(diags...)
-// 	if resp.Diagnostics.HasError() {
-// 		return
-// 	}
-
-// 	diags = data.validate(ctx)
-// 	resp.Diagnostics.Append(diags...)
-// }
-
 func (u *urlDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: urlMarkdownDescription,
@@ -155,32 +142,6 @@ func (u *urlDataSource) Read(ctx context.Context, req datasource.ReadRequest, re
 	diags = resp.State.Set(ctx, &data)
 	resp.Diagnostics.Append(diags...)
 }
-
-// func (d *urlDataSourceModel) validate(_ context.Context) diag.Diagnostics {
-// 	var diags diag.Diagnostics
-
-// 	if d.Url.IsUnknown() {
-// 		return diags
-// 	}
-
-// 	if d.Url.IsNull() {
-// 		diags.AddAttributeError(
-// 			path.Root("url"),
-// 			"Invalid Attribute Configuration",
-// 			"Expected url to be non-null. Received a null value.",
-// 		)
-// 	}
-
-// 	if netparse.UrlValidate(d.Url.ValueString()) != nil {
-// 		diags.AddAttributeError(
-// 			path.Root("url"),
-// 			"Invalid Attribute Configuration",
-// 			"Expected url to be valid. Received an invalid value.",
-// 		)
-// 	}
-
-// 	return diags
-// }
 
 func (u *urlDataSourceModel) update(_ context.Context) error {
 	url, err := netparse.ParseUrl(u.Url.ValueString())
