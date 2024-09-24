@@ -7,8 +7,6 @@ import (
 	"github.com/gmeligio/terraform-provider-netparse/internal/netparse"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -46,18 +44,18 @@ func (d *domainDataSource) Metadata(ctx context.Context, req datasource.Metadata
 	resp.TypeName = req.ProviderTypeName + "_domain"
 }
 
-func (d *domainDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
-	var data domainDataSourceModel
+// func (d *domainDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
+// 	var data domainDataSourceModel
 
-	diags := req.Config.Get(ctx, &data)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
+// 	diags := req.Config.Get(ctx, &data)
+// 	resp.Diagnostics.Append(diags...)
+// 	if resp.Diagnostics.HasError() {
+// 		return
+// 	}
 
-	diags = data.validate(ctx)
-	resp.Diagnostics.Append(diags...)
-}
+// 	diags = data.validate(ctx)
+// 	resp.Diagnostics.Append(diags...)
+// }
 
 func (d *domainDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
@@ -112,31 +110,31 @@ func (d *domainDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 	resp.Diagnostics.Append(diags...)
 }
 
-func (d domainDataSourceModel) validate(_ context.Context) diag.Diagnostics {
-	var diags diag.Diagnostics
+// func (d domainDataSourceModel) validate(_ context.Context) diag.Diagnostics {
+// 	var diags diag.Diagnostics
 
-	if d.Host.IsUnknown(){
-		return diags
-	}
+// 	if d.Host.IsUnknown(){
+// 		return diags
+// 	}
 
-	if d.Host.IsNull() {
-		diags.AddAttributeError(
-			path.Root("host"),
-			"Invalid Attribute Configuration",
-			"Expected host to be non-null. Received a null value.",
-		)
-	}
+// 	if d.Host.IsNull() {
+// 		diags.AddAttributeError(
+// 			path.Root("host"),
+// 			"Invalid Attribute Configuration",
+// 			"Expected host to be non-null. Received a null value.",
+// 		)
+// 	}
 
-	if netparse.DomainValidate(d.Host.ValueString()) != nil {
-		diags.AddAttributeError(
-			path.Root("host"),
-			"Invalid Attribute Configuration",
-			"Expected host to be valid. Received an invalid value.",
-		)
-	}
+// 	if netparse.DomainValidate(d.Host.ValueString()) != nil {
+// 		diags.AddAttributeError(
+// 			path.Root("host"),
+// 			"Invalid Attribute Configuration",
+// 			"Expected host to be valid. Received an invalid value.",
+// 		)
+// 	}
 
-	return diags
-}
+// 	return diags
+// }
 
 func (d *domainDataSourceModel) update(_ context.Context) error {
 	domain, err := netparse.ParseDomain(d.Host.ValueString())

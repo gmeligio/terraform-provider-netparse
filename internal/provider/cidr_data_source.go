@@ -7,8 +7,6 @@ import (
 	"github.com/gmeligio/terraform-provider-netparse/internal/netparse"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -40,18 +38,18 @@ func (d *cidrDataSource) Metadata(ctx context.Context, req datasource.MetadataRe
 	resp.TypeName = req.ProviderTypeName + "_cidr"
 }
 
-func (d *cidrDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
-	var data cidrDataSourceModel
+// func (d *cidrDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
+// 	var data cidrDataSourceModel
 
-	diags := req.Config.Get(ctx, &data)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
+// 	diags := req.Config.Get(ctx, &data)
+// 	resp.Diagnostics.Append(diags...)
+// 	if resp.Diagnostics.HasError() {
+// 		return
+// 	}
 
-	diags = data.validate(ctx)
-	resp.Diagnostics.Append(diags...)
-}
+// 	diags = data.validate(ctx)
+// 	resp.Diagnostics.Append(diags...)
+// }
 
 func (d *cidrDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
@@ -94,31 +92,31 @@ func (d *cidrDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 	resp.Diagnostics.Append(diags...)
 }
 
-func (d *cidrDataSourceModel) validate(_ context.Context) diag.Diagnostics {
-	var diags diag.Diagnostics
+// func (d *cidrDataSourceModel) validate(_ context.Context) diag.Diagnostics {
+// 	var diags diag.Diagnostics
 
-	if d.CIDR.IsUnknown() {
-		return diags
-	}
+// 	if d.CIDR.IsUnknown() {
+// 		return diags
+// 	}
 
-	if d.CIDR.IsNull() {
-		diags.AddAttributeError(
-			path.Root("cidr"),
-			"Invalid Attribute Configuration",
-			"Expected cidr to be non-null. Received a null value.",
-		)
-	}
+// 	if d.CIDR.IsNull() {
+// 		diags.AddAttributeError(
+// 			path.Root("cidr"),
+// 			"Invalid Attribute Configuration",
+// 			"Expected cidr to be non-null. Received a null value.",
+// 		)
+// 	}
 
-	if netparse.CidrValidate(d.CIDR.ValueString()) != nil {
-		diags.AddAttributeError(
-			path.Root("cidr"),
-			"Invalid Attribute Configuration",
-			"Expected cidr to be valid. Received an invalid value.",
-		)
-	}
+// 	if netparse.CidrValidate(d.CIDR.ValueString()) != nil {
+// 		diags.AddAttributeError(
+// 			path.Root("cidr"),
+// 			"Invalid Attribute Configuration",
+// 			"Expected cidr to be valid. Received an invalid value.",
+// 		)
+// 	}
 
-	return diags
-}
+// 	return diags
+// }
 
 func (d *cidrDataSourceModel) update(_ context.Context) error {
 	cidr, err := netparse.ParseCIDR(d.CIDR.ValueString())
