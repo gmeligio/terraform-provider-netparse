@@ -109,11 +109,12 @@ func (d *cidrDataSourceModel) validate(_ context.Context) diag.Diagnostics {
 		)
 	}
 
-	cidr, err := netparse.ParseCIDR(d.CIDR.ValueString())
-
-	err = cidr.Validate()
-	if err != nil {
-		diags.AddError("failed to validate URL", err.Error())
+	if netparse.CidrValidate(d.CIDR.ValueString()) != nil {
+		diags.AddAttributeError(
+			path.Root("cidr"),
+			"Invalid Attribute Configuration",
+			"Expected cidr to be valid. Received an invalid value.",
+		)
 	}
 
 	return diags

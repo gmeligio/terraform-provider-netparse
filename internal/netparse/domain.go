@@ -85,3 +85,7 @@ func extractSld(host, eTLD string) (string, error) {
 
 	return host[1+lastDotInLeftTld : i], nil
 }
+
+func DomainValidate(u string) error {
+	return nil
+}

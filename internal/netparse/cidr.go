@@ -31,3 +31,7 @@ func ParseCIDR(c string) (*cidrModel, error) {
 func (u *cidrModel) Validate() error {
 	return nil
 }
+
+func CidrValidate(u string) error {
+	return nil
+}

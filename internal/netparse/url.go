@@ -101,3 +101,7 @@ func renderAuthority(u *url.URL) string {
 
 	return credentialsComponent + u.Hostname() + portComponent
 }
+
+func UrlValidate(u string) error {
+	return nil
+}

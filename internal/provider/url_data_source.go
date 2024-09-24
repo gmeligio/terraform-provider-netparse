@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
@@ -174,25 +175,27 @@ func (u *urlDataSource) Read(ctx context.Context, req datasource.ReadRequest, re
 	resp.Diagnostics.Append(diags...)
 }
 
-func (u *urlDataSourceModel) validate(ctx context.Context) diag.Diagnostics {
+func (d *urlDataSourceModel) validate(_ context.Context) diag.Diagnostics {
 	var diags diag.Diagnostics
 
-	if u.Url.IsUnknown() {
+	if d.Url.IsUnknown() {
 		return diags
 	}
 
-	url, err := netparse.ParseUrl(u.Url.ValueString())
-	if err != nil {
-		diags.AddError("failed to parse URL", err.Error())
+	if d.Url.IsNull() {
+		diags.AddAttributeError(
+			path.Root("url"),
+			"Invalid Attribute Configuration",
+			"Expected url to be non-null. Received a null value.",
+		)
 	}
 
-	tflog.Trace(ctx, "Parsed URL", map[string]interface{}{
-		"url": url,
-	})
-
-	err = url.Validate()
-	if err != nil {
-		diags.AddError("failed to validate URL", err.Error())
+	if netparse.UrlValidate(d.Url.ValueString()) != nil {
+		diags.AddAttributeError(
+			path.Root("url"),
+			"Invalid Attribute Configuration",
+			"Expected url to be valid. Received an invalid value.",
+		)
 	}
 
 	return diags

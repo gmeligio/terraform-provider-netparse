@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"golang.org/x/net/publicsuffix"
 )
 
 const (
@@ -113,7 +112,6 @@ func (d *domainDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 	resp.Diagnostics.Append(diags...)
 }
 
-// TODO: Use regexp from `psl.isValid` to validate and remove verification of manager.
 func (d domainDataSourceModel) validate(_ context.Context) diag.Diagnostics {
 	var diags diag.Diagnostics
 
@@ -129,17 +127,11 @@ func (d domainDataSourceModel) validate(_ context.Context) diag.Diagnostics {
 		)
 	}
 
-	host := d.Host.ValueString()
-
-	eTLD, icann := publicsuffix.PublicSuffix(host)
-
-	manager := netparse.FindManager(icann, eTLD)
-
-	if manager == "None" {
+	if netparse.DomainValidate(d.Host.ValueString()) != nil {
 		diags.AddAttributeError(
 			path.Root("host"),
 			"Invalid Attribute Configuration",
-			"Expected host to have as a manager either ICANN or Private.",
+			"Expected host to be valid. Received an invalid value.",
 		)
 	}
 
@@ -150,6 +142,10 @@ func (d *domainDataSourceModel) update(_ context.Context) error {
 	domain, err := netparse.ParseDomain(d.Host.ValueString())
 	if err != nil {
 		return fmt.Errorf("failed to parse domain: %w", err)
+	}
+
+	if domain.Manager == "None" {
+		return fmt.Errorf("unsupported manager: None")
 	}
 
 	d.Domain = types.StringValue(domain.Domain)
