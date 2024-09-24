@@ -11,24 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
-const (
-	urlMarkdownDescription                  = "Parses URL components from a URL string. It uses the [net/url](https://pkg.go.dev/net/url) go package to parse the URL. For more details on the URL components, see [What is a URL?](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_is_a_URL) and [WHATWG URL Standard](https://url.spec.whatwg.org/#api)."
-	urlAttributeMarkdownDescription         = "The URL to parse."
-	authorityAttributeMarkdownDescription   = "The concatenation of the username, password, host, and port. It's separated from the scheme by `://`."
-	credentialsAttributeMarkdownDescription = "The concatenation of the username and password."
-	fragmentAttributeMarkdownDescription    = "The component after the search."
-	hashAttributeMarkdownDescription        = "The concatenation of a `#` with the fragment."
-	hostAttributeMarkdownDescription        = "The domain part of the authority."
-	passwordAttributeMarkdownDescription    = "The second component of the credentials."
-	protocolAttributeMarkdownDescription    = "The concatenation of the protocol scheme and `:`."
-	schemeAttributeMarkdownDescription      = "The protocol scheme used to access the domain."
-	usernameAttributeMarkdownDescription    = "The first component of the credentials."
-	portAttributeMarkdownDescription        = "The last component of the authority."
-	pathAttributeMarkdownDescription        = "The component after the authority."
-	queryAttributeMarkdownDescription       = "A substring of the search component, after the `?` and before the fragment."
-	searchAttributeMarkdownDescription      = "The component after the path."
-)
-
+var urlDataSourceTypeName = fmt.Sprintf("%s_url", providerTypeName)
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ datasource.DataSource = &urlDataSource{}

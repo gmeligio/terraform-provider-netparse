@@ -3,14 +3,44 @@
 page_title: "parse_url function - netparse"
 subcategory: ""
 description: |-
-  Parses URL components from a URL string. It uses the net/url https://pkg.go.dev/net/url go package to parse the URL. For more details on the URL components, see What is a URL? https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_is_a_URL and WHATWG URL Standard https://url.spec.whatwg.org/#api.
+  Parses URL components from a URL string. It uses the net/url https://pkg.go.dev/net/url go package to parse the URL. For more details on the URL components, see What is a URL? https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_is_a_URL and WHATWG URL Standard https://url.spec.whatwg.org/#api. The functionality is equivalent to the netparse_url data source.
 ---
 
 # function: parse_url
 
-Parses URL components from a URL string. It uses the [net/url](https://pkg.go.dev/net/url) go package to parse the URL. For more details on the URL components, see [What is a URL?](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_is_a_URL) and [WHATWG URL Standard](https://url.spec.whatwg.org/#api).
+Parses URL components from a URL string. It uses the [net/url](https://pkg.go.dev/net/url) go package to parse the URL. For more details on the URL components, see [What is a URL?](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_is_a_URL) and [WHATWG URL Standard](https://url.spec.whatwg.org/#api). The functionality is equivalent to the `netparse_url` data source.
 
+## Example Usage
 
+```terraform
+locals {
+  # Get the host from the URL
+  url = provider::netparse::parse_url("https://abc:def@example.com:45/path/to/somewhere?foo=bar&baz=qux#231s")
+
+  # {
+  #   host = "foo.bar.example.com"
+  #   domain = "example.com"
+  #   manager = "ICANN"
+  #   sld = "example"
+  #   subdomain = "foo.bar"
+  #   tld = "com"
+  # }
+}
+
+# Then get the domain from the host
+output "domain" {
+  value = provider::netparse::parse_domain(url.host)
+
+  # {
+  #   host = "example.com"
+  #   domain = "example.com"
+  #   manager = "ICANN"
+  #   sld = "example"
+  #   subdomain = ""
+  #   tld = "com"
+  # }
+}
+```
 
 ## Signature
 

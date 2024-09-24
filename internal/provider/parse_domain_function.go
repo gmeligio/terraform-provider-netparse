@@ -46,8 +46,8 @@ func (f ParseDomainFunction) Metadata(_ context.Context, req function.MetadataRe
 
 func (f ParseDomainFunction) Definition(_ context.Context, _ function.DefinitionRequest, resp *function.DefinitionResponse) {
 	resp.Definition = function.Definition{
-		Summary:             domainMarkdownDescription,
-		MarkdownDescription: domainMarkdownDescription,
+		Summary:             parseDomainMarkdownDescription,
+		MarkdownDescription: parseDomainMarkdownDescription,
 		Parameters: []function.Parameter{
 			function.StringParameter{
 				Name:                "host",

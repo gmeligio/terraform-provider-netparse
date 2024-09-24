@@ -14,6 +14,10 @@ import (
 var _ provider.Provider = &NetparseProvider{}
 var _ provider.ProviderWithFunctions = &NetparseProvider{}
 
+const (
+	providerTypeName = "netparse"
+)
+
 // NetparseProvider defines the provider implementation.
 type NetparseProvider struct {
 	// version is set to the provider version on release, "dev" when the
@@ -23,7 +27,7 @@ type NetparseProvider struct {
 }
 
 func (p *NetparseProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
-	resp.TypeName = "netparse"
+	resp.TypeName = providerTypeName
 	resp.Version = p.version
 }
 

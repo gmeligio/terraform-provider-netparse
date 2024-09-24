@@ -39,7 +39,7 @@ output "url" {
   # }
 }
 
-# The get the domain from the host
+# Then get the domain from the host
 data "netparse_domain" "example" {
   host = data.netparse_url.example.host
 }

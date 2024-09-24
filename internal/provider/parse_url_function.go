@@ -60,8 +60,8 @@ func (f ParseUrlFunction) Metadata(_ context.Context, req function.MetadataReque
 
 func (f ParseUrlFunction) Definition(_ context.Context, _ function.DefinitionRequest, resp *function.DefinitionResponse) {
 	resp.Definition = function.Definition{
-		Summary:             urlMarkdownDescription,
-		MarkdownDescription: urlMarkdownDescription,
+		Summary:             parseUrlMarkdownDescription,
+		MarkdownDescription: parseUrlMarkdownDescription,
 		Parameters: []function.Parameter{
 			function.StringParameter{
 				Name:                "url",

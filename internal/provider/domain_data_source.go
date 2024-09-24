@@ -10,15 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-const (
-	domainMarkdownDescription        = "Parses Public Suffix List properties from a domain. It uses the [publicsuffix](https://pkg.go.dev/golang.org/x/net/publicsuffix) go package to parse the domain. For more details on the domain parts, see [What is a Domain Name?](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_domain_name)."
-	domainAttrMarkdownDescription    = "The domain name. It's the tld plus one more label."
-	hostAttrMarkdownDescription      = "The host that identifies the domain name."
-	managerAttrMarkdownDescription   = "The manager is the entity that manages the domain. It can be one of: ICANN, Private, or None."
-	sldAttrMarkdownDescription       = "The second-level domain (SLD) is the label to the left of the effective TLD."
-	subdomainAttrMarkdownDescription = "The subdomain is the left part of the host that is not the domain."
-	tldAttrMarkdownDescription       = "The effective top-level domain (eTLD) of the domain. This is the public suffix of the domain."
-)
+var domainDataSourceTypeName = fmt.Sprintf("%s_domain", providerTypeName)
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ datasource.DataSource = &domainDataSource{}

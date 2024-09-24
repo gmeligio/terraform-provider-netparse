@@ -3,14 +3,29 @@
 page_title: "parse_domain function - netparse"
 subcategory: ""
 description: |-
-  Parses Public Suffix List properties from a domain. It uses the publicsuffix https://pkg.go.dev/golang.org/x/net/publicsuffix go package to parse the domain. For more details on the domain parts, see What is a Domain Name? https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_domain_name.
+  Parses Public Suffix List properties from a domain. It uses the publicsuffix https://pkg.go.dev/golang.org/x/net/publicsuffix go package to parse the domain. For more details on the domain parts, see What is a Domain Name? https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_domain_name. The functionality is equivalent to the netparse_domain data source.
 ---
 
 # function: parse_domain
 
-Parses Public Suffix List properties from a domain. It uses the [publicsuffix](https://pkg.go.dev/golang.org/x/net/publicsuffix) go package to parse the domain. For more details on the domain parts, see [What is a Domain Name?](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_domain_name).
+Parses Public Suffix List properties from a domain. It uses the [publicsuffix](https://pkg.go.dev/golang.org/x/net/publicsuffix) go package to parse the domain. For more details on the domain parts, see [What is a Domain Name?](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_domain_name). The functionality is equivalent to the `netparse_domain` data source.
 
+## Example Usage
 
+```terraform
+output "domain" {
+  value = provider::netparse::parse_domain("foo.bar.example.com")
+
+  # {
+  #   host = "foo.bar.example.com"
+  #   domain = "example.com"
+  #   manager = "ICANN"
+  #   sld = "example"
+  #   subdomain = "foo.bar"
+  #   tld = "com"
+  # }
+}
+```
 
 ## Signature
 
