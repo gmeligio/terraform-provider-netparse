@@ -18,7 +18,6 @@ type ParseDomainFunction struct{}
 
 type parseDomainFunctionReturnModel struct {
 	Domain    string `tfsdk:"domain"`
-	Host      string `tfsdk:"host"`
 	Manager   string `tfsdk:"manager"`
 	SLD       string `tfsdk:"sld"`
 	Subdomain string `tfsdk:"subdomain"`
@@ -32,7 +31,6 @@ func NewParseDomainFunction() function.Function {
 func FromDomainModel(d *netparse.DomainModel) parseDomainFunctionReturnModel {
 	return parseDomainFunctionReturnModel{
 		Domain:    d.Domain,
-		Host:      d.Host,
 		Manager:   d.Manager,
 		SLD:       d.SLD,
 		Subdomain: d.Subdomain,
@@ -57,7 +55,6 @@ func (f ParseDomainFunction) Definition(_ context.Context, _ function.Definition
 		Return: function.ObjectReturn{
 			AttributeTypes: map[string]attr.Type{
 				"domain":    types.StringType,
-				"host":      types.StringType,
 				"manager":   types.StringType,
 				"sld":       types.StringType,
 				"subdomain": types.StringType,

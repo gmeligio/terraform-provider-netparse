@@ -16,7 +16,7 @@ var urlDataSourceTypeName = fmt.Sprintf("%s_url", providerTypeName)
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ datasource.DataSource = &urlDataSource{}
 
-func NewUrlDataSource() datasource.DataSource {
+func NewURLDataSource() datasource.DataSource {
 	return &urlDataSource{}
 }
 
@@ -24,7 +24,7 @@ func NewUrlDataSource() datasource.DataSource {
 type urlDataSource struct{}
 
 type urlDataSourceModel struct {
-	Url         types.String `tfsdk:"url"`
+	URL         types.String `tfsdk:"url"`
 	Authority   types.String `tfsdk:"authority"`
 	Protocol    types.String `tfsdk:"protocol"`
 	Scheme      types.String `tfsdk:"scheme"`
@@ -40,7 +40,7 @@ type urlDataSourceModel struct {
 	Fragment    types.String `tfsdk:"fragment"`
 }
 
-func NewUrlDataSourceModel() *urlDataSourceModel {
+func NewURLDataSourceModel() *urlDataSourceModel {
 	return &urlDataSourceModel{}
 }
 
@@ -144,7 +144,7 @@ func (u *urlDataSource) Read(ctx context.Context, req datasource.ReadRequest, re
 }
 
 func (u *urlDataSourceModel) update(_ context.Context) error {
-	url, err := netparse.ParseUrl(u.Url.ValueString())
+	url, err := netparse.ParseURL(u.URL.ValueString())
 	if err != nil {
 		return fmt.Errorf("failed to parse URL: %w", err)
 	}

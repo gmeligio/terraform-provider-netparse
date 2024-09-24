@@ -10,12 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-const (
-	cidrMarkdownDescription        = "Parses an IP address and prefix length in CIDR notation as defined in [RFC 4632](https://rfc-editor.org/rfc/rfc4632.html) and [RFC 4291](https://rfc-editor.org/rfc/rfc4291.html)."
-	cidrAttrMarkdownDescription    = "IP address and prefix length in CIDR notation."
-	ipAttrMarkdownDescription    = "IP address."
-	networkAttrMarkdownDescription    = "IP network."
-)
+var cidrDataSourceTypeName = fmt.Sprintf("%s_cidr", providerTypeName)
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ datasource.DataSource = &cidrDataSource{}

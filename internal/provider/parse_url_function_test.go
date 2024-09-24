@@ -16,7 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/tfversion"
 )
 
-func TestParseUrlFunction_Known(t *testing.T) {
+func TestParseURLFunction_Known(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
 			tfversion.SkipBelow(version.Must(version.NewVersion("1.8.0"))),
@@ -24,7 +24,7 @@ func TestParseUrlFunction_Known(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccParseUrlFunctionConfig_basic("https://abc:def@example.com:45/path/to/somewhere?foo=bar&baz=qux#231"),
+				Config: testAccParseURLFunctionConfig_basic("https://abc:def@example.com:45/path/to/somewhere?foo=bar&baz=qux#231"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownOutputValueAtPath(
 						"test",
@@ -97,7 +97,7 @@ func TestParseUrlFunction_Known(t *testing.T) {
 	})
 }
 
-func TestParseUrlFunction_Null(t *testing.T) {
+func TestParseURLFunction_Null(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
 			tfversion.SkipBelow(version.Must(version.NewVersion("1.8.0"))),
@@ -116,7 +116,7 @@ func TestParseUrlFunction_Null(t *testing.T) {
 	})
 }
 
-func TestParseUrlFunction_Unknown(t *testing.T) {
+func TestParseURLFunction_Unknown(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
 			tfversion.SkipBelow(version.Must(version.NewVersion("1.8.0"))),
@@ -145,7 +145,7 @@ func TestParseUrlFunction_Unknown(t *testing.T) {
 	})
 }
 
-func testAccParseUrlFunctionConfig_basic(host string) string {
+func testAccParseURLFunctionConfig_basic(host string) string {
 	return fmt.Sprintf(`
 output "test" {
 	value = provider::netparse::parse_url(%[1]q)

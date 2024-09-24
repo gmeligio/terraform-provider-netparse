@@ -4,16 +4,16 @@ import (
 	"net"
 )
 
-// cidrDataSourceModel describes the data source data model.
+// CidrModel describes the CIDR model.
 // References used.
 // https://pkg.go.dev/net#ParseCIDR
-type cidrModel struct {
+type CidrModel struct {
 	CIDR    string
 	IP      string
 	Network string
 }
 
-func ParseCIDR(c string) (*cidrModel, error) {
+func ParseCIDR(c string) (*CidrModel, error) {
 	cidr := c
 
 	ip, network, err := net.ParseCIDR(cidr)
@@ -21,17 +21,21 @@ func ParseCIDR(c string) (*cidrModel, error) {
 		return nil, err
 	}
 
-	return &cidrModel{
+	return &CidrModel{
 		CIDR:    cidr,
 		IP:      ip.String(),
 		Network: network.String(),
 	}, nil
 }
 
-func (u *cidrModel) Validate() error {
+func (u *CidrModel) Validate() error {
 	return nil
 }
 
 func CidrValidate(u string) error {
 	return nil
+}
+
+func ContainsIp(network string, ip string) (*DomainModel, error) {
+	return nil, nil
 }

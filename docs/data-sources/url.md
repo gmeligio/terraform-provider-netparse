@@ -48,12 +48,12 @@ output "domain" {
   value = data.netparse_domain.example
 
   # {
-  #   host = "example.com"
-  #   domain = "example.com"
-  #   manager = "ICANN"
-  #   sld = "example"
+  #   host      = "example.com"
+  #   domain    = "example.com"
+  #   manager   = "ICANN"
+  #   sld       = "example"
   #   subdomain = ""
-  #   tld = "com"
+  #   tld       = "com"
   # }
 }
 ```

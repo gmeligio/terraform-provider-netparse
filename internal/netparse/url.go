@@ -4,11 +4,11 @@ import (
 	"net/url"
 )
 
-// UrlModel describes the data source data model.
+// URLModel describes the data source data model.
 // References used.
 // https://registry.terraform.io/modules/matti/urlparse/external/latest
 // https://registry.terraform.io/providers/northwood-labs/corefunc/latest/docs/data-sources/url_parse
-type UrlModel struct {
+type URLModel struct {
 	Url         string
 	Authority   string
 	Protocol    string
@@ -25,27 +25,27 @@ type UrlModel struct {
 	Fragment    string
 }
 
-func ParseUrl(u string) (*UrlModel, error) {
-	internalUrl, err := url.Parse(u)
+func ParseURL(u string) (*URLModel, error) {
+	internalURL, err := url.Parse(u)
 	if err != nil {
 		return nil, err
 	}
 
-	authority := renderAuthority(internalUrl)
-	scheme := internalUrl.Scheme
+	authority := renderAuthority(internalURL)
+	scheme := internalURL.Scheme
 	protocol := scheme + ":"
-	credentials := internalUrl.User.String()
-	username := internalUrl.User.Username()
-	password, _ := internalUrl.User.Password()
-	host := internalUrl.Hostname()
-	port := internalUrl.Port()
-	path := internalUrl.Path
-	search := renderSearch(internalUrl)
-	query := internalUrl.RawQuery
-	fragment := internalUrl.Fragment
-	hash := renderHash(internalUrl)
+	credentials := internalURL.User.String()
+	username := internalURL.User.Username()
+	password, _ := internalURL.User.Password()
+	host := internalURL.Hostname()
+	port := internalURL.Port()
+	path := internalURL.Path
+	search := renderSearch(internalURL)
+	query := internalURL.RawQuery
+	fragment := internalURL.Fragment
+	hash := renderHash(internalURL)
 
-	return &UrlModel{
+	return &URLModel{
 		Url:         u,
 		Authority:   authority,
 		Protocol:    protocol,
@@ -63,7 +63,7 @@ func ParseUrl(u string) (*UrlModel, error) {
 	}, nil
 }
 
-func (u *UrlModel) Validate() error {
+func (u *URLModel) Validate() error {
 	return nil
 }
 

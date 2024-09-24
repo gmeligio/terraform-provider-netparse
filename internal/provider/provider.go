@@ -44,7 +44,7 @@ func (p *NetparseProvider) Resources(ctx context.Context) []func() resource.Reso
 
 func (p *NetparseProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
-		NewUrlDataSource,
+		NewURLDataSource,
 		NewDomainDataSource,
 		NewCIDRDataSource,
 	}
@@ -52,8 +52,9 @@ func (p *NetparseProvider) DataSources(ctx context.Context) []func() datasource.
 
 func (p *NetparseProvider) Functions(ctx context.Context) []func() function.Function {
 	return []func() function.Function{
-		NewParseUrlFunction,
+		NewParseURLFunction,
 		NewParseDomainFunction,
+		NewParseCIDRFunction,
 	}
 }
 

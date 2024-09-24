@@ -14,7 +14,7 @@ const (
 	tldAttrMarkdownDescription       = "The effective top-level domain (eTLD) of the domain. This is the public suffix of the domain."
 )
 
-var parseUrlMarkdownDescription = describeFunction(urlMarkdownDescription, urlDataSourceTypeName)
+var parseURLMarkdownDescription = describeFunction(urlMarkdownDescription, urlDataSourceTypeName)
 
 const (
 	urlMarkdownDescription                  = "Parses URL components from a URL string. It uses the [net/url](https://pkg.go.dev/net/url) go package to parse the URL. For more details on the URL components, see [What is a URL?](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_is_a_URL) and [WHATWG URL Standard](https://url.spec.whatwg.org/#api)."
@@ -32,6 +32,15 @@ const (
 	pathAttributeMarkdownDescription        = "The component after the authority."
 	queryAttributeMarkdownDescription       = "A substring of the search component, after the `?` and before the fragment."
 	searchAttributeMarkdownDescription      = "The component after the path."
+)
+
+var parseCIDRMarkdownDescription = describeFunction(cidrMarkdownDescription, cidrDataSourceTypeName)
+
+const (
+	cidrMarkdownDescription        = "Parses an IP address and prefix length in CIDR notation as defined in [RFC 4632](https://rfc-editor.org/rfc/rfc4632.html) and [RFC 4291](https://rfc-editor.org/rfc/rfc4291.html)."
+	cidrAttrMarkdownDescription    = "IP address and prefix length in CIDR notation."
+	ipAttrMarkdownDescription    = "IP address."
+	networkAttrMarkdownDescription    = "IP network."
 )
 
 func describeFunction(dataSourceDescription string, functionTypeName string) string {
