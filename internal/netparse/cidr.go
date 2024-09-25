@@ -2,7 +2,7 @@ package netparse
 
 import (
 	"fmt"
-	"net"
+	"net/netip"
 )
 
 // CidrModel describes the CIDR model.
@@ -17,10 +17,12 @@ type CidrModel struct {
 func ParseCIDR(c string) (*CidrModel, error) {
 	cidr := c
 
-	ip, network, err := net.ParseCIDR(cidr)
+	prefix, err := netip.ParsePrefix(cidr)
 	if err != nil {
 		return nil, err
 	}
+	network := prefix.Masked()
+	ip := prefix.Addr()
 
 	return &CidrModel{
 		CIDR:    cidr,
@@ -38,15 +40,15 @@ func CidrValidate(u string) error {
 }
 
 func ContainsIP(network string, ip string) (bool, error) {
-	_, parsedNetwork, err := net.ParseCIDR(network)
+	prefix, err := netip.ParsePrefix(network)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("failed to parse IP network: %s", network)
 	}
 	
-	parsedIP := net.ParseIP(ip)
-	if parsedIP == nil {
+	addr, err := netip.ParseAddr(ip)
+	if err != nil {
 		return false, fmt.Errorf("failed to parse IP address: %s", ip)
 	}
 
-	return parsedNetwork.Contains(parsedIP), nil
+	return prefix.Contains(addr), nil
 }

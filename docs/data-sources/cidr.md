@@ -3,12 +3,12 @@
 page_title: "netparse_cidr Data Source - netparse"
 subcategory: ""
 description: |-
-  Parses an IP address and prefix length in CIDR notation as defined in RFC 4632 https://rfc-editor.org/rfc/rfc4632.html and RFC 4291 https://rfc-editor.org/rfc/rfc4291.html.
+  Parses an IP address and prefix length in CIDR notation. It uses the net/netip https://pkg.go.dev/net/netip#Prefix.Masked go package to parse the CDIR. For more details in CIDR notation, see RFC 4632 https://rfc-editor.org/rfc/rfc4632.html and RFC 4291 https://rfc-editor.org/rfc/rfc4291.html.
 ---
 
 # netparse_cidr (Data Source)
 
-Parses an IP address and prefix length in CIDR notation as defined in [RFC 4632](https://rfc-editor.org/rfc/rfc4632.html) and [RFC 4291](https://rfc-editor.org/rfc/rfc4291.html).
+Parses an IP address and prefix length in CIDR notation. It uses the [net/netip](https://pkg.go.dev/net/netip#Prefix.Masked) go package to parse the CDIR. For more details in CIDR notation, see [RFC 4632](https://rfc-editor.org/rfc/rfc4632.html) and [RFC 4291](https://rfc-editor.org/rfc/rfc4291.html).
 
 ## Example Usage
 
