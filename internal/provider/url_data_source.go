@@ -4,17 +4,19 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/gmeligio/terraform-provider-netparse/internal/netparse"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
+var urlDataSourceTypeName = fmt.Sprintf("%s_url", providerTypeName)
+
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ datasource.DataSource = &urlDataSource{}
 
-func NewUrlDataSource() datasource.DataSource {
+func NewURLDataSource() datasource.DataSource {
 	return &urlDataSource{}
 }
 
@@ -22,7 +24,7 @@ func NewUrlDataSource() datasource.DataSource {
 type urlDataSource struct{}
 
 type urlDataSourceModel struct {
-	Url         types.String `tfsdk:"url"`
+	URL         types.String `tfsdk:"url"`
 	Authority   types.String `tfsdk:"authority"`
 	Protocol    types.String `tfsdk:"protocol"`
 	Scheme      types.String `tfsdk:"scheme"`
@@ -38,25 +40,12 @@ type urlDataSourceModel struct {
 	Fragment    types.String `tfsdk:"fragment"`
 }
 
-func NewUrlDataSourceModel() *urlDataSourceModel {
+func NewURLDataSourceModel() *urlDataSourceModel {
 	return &urlDataSourceModel{}
 }
 
 func (u *urlDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_url"
-}
-
-func (u *urlDataSource) ValidateConfig(ctx context.Context, req datasource.ValidateConfigRequest, resp *datasource.ValidateConfigResponse) {
-	var data urlDataSourceModel
-
-	diags := req.Config.Get(ctx, &data)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	diags = data.validate(ctx)
-	resp.Diagnostics.Append(diags...)
 }
 
 func (u *urlDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
@@ -154,28 +143,8 @@ func (u *urlDataSource) Read(ctx context.Context, req datasource.ReadRequest, re
 	resp.Diagnostics.Append(diags...)
 }
 
-func (u *urlDataSourceModel) validate(ctx context.Context) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	url, err := ParseUrl(u.Url.ValueString())
-	if err != nil {
-		diags.AddError("failed to parse URL", err.Error())
-	}
-
-	tflog.Trace(ctx, "Parsed URL", map[string]interface{}{
-		"url": url,
-	})
-
-	err = url.validate()
-	if err != nil {
-		diags.AddError("failed to validate URL", err.Error())
-	}
-
-	return diags
-}
-
 func (u *urlDataSourceModel) update(_ context.Context) error {
-	url, err := ParseUrl(u.Url.ValueString())
+	url, err := netparse.ParseURL(u.URL.ValueString())
 	if err != nil {
 		return fmt.Errorf("failed to parse URL: %w", err)
 	}

@@ -6,16 +6,17 @@ package provider
 import (
 	"context"
 
+	"github.com/gmeligio/terraform-provider-netparse/internal/netparse"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/function"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ function.Function = ParseUrlFunction{}
+var _ function.Function = ParseURLFunction{}
 
-type ParseUrlFunction struct{}
+type ParseURLFunction struct{}
 
-type parseUrlFunctionReturnModel struct {
+type parseURLFunctionReturnModel struct {
 	Authority   string `tfsdk:"authority"`
 	Protocol    string `tfsdk:"protocol"`
 	Scheme      string `tfsdk:"scheme"`
@@ -31,12 +32,12 @@ type parseUrlFunctionReturnModel struct {
 	Fragment    string `tfsdk:"fragment"`
 }
 
-func NewParseUrlFunction() function.Function {
-	return ParseUrlFunction{}
+func NewParseURLFunction() function.Function {
+	return ParseURLFunction{}
 }
 
-func FromUrlModel(u *urlModel) parseUrlFunctionReturnModel {
-	return parseUrlFunctionReturnModel{
+func FromURLModel(u *netparse.URLModel) parseURLFunctionReturnModel {
+	return parseURLFunctionReturnModel{
 		Authority:   u.Authority,
 		Protocol:    u.Protocol,
 		Scheme:      u.Scheme,
@@ -53,14 +54,14 @@ func FromUrlModel(u *urlModel) parseUrlFunctionReturnModel {
 	}
 }
 
-func (f ParseUrlFunction) Metadata(_ context.Context, req function.MetadataRequest, resp *function.MetadataResponse) {
+func (f ParseURLFunction) Metadata(_ context.Context, req function.MetadataRequest, resp *function.MetadataResponse) {
 	resp.Name = "parse_url"
 }
 
-func (f ParseUrlFunction) Definition(_ context.Context, _ function.DefinitionRequest, resp *function.DefinitionResponse) {
+func (f ParseURLFunction) Definition(_ context.Context, _ function.DefinitionRequest, resp *function.DefinitionResponse) {
 	resp.Definition = function.Definition{
-		Summary:             urlMarkdownDescription,
-		MarkdownDescription: urlMarkdownDescription,
+		Summary:             parseURLMarkdownDescription,
+		MarkdownDescription: parseURLMarkdownDescription,
 		Parameters: []function.Parameter{
 			function.StringParameter{
 				Name:                "url",
@@ -87,7 +88,7 @@ func (f ParseUrlFunction) Definition(_ context.Context, _ function.DefinitionReq
 	}
 }
 
-func (f ParseUrlFunction) Run(ctx context.Context, req function.RunRequest, resp *function.RunResponse) {
+func (f ParseURLFunction) Run(ctx context.Context, req function.RunRequest, resp *function.RunResponse) {
 	var (
 		url string
 	)
@@ -97,7 +98,7 @@ func (f ParseUrlFunction) Run(ctx context.Context, req function.RunRequest, resp
 		return
 	}
 
-	urlModel, err := ParseUrl(url)
+	urlModel, err := netparse.ParseURL(url)
 	if err != nil {
 		resp.Error = function.ConcatFuncErrors(
 			function.NewFuncError(err.Error()),
@@ -105,7 +106,7 @@ func (f ParseUrlFunction) Run(ctx context.Context, req function.RunRequest, resp
 		return
 	}
 
-	result := FromUrlModel(urlModel)
+	result := FromURLModel(urlModel)
 
 	resp.Error = function.ConcatFuncErrors(resp.Result.Set(ctx, result))
 }
