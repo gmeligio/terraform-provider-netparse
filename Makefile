@@ -6,5 +6,8 @@ testacc:
 generate:
 	go generate ./...
 
+lint:
+	golangci-lint run --fix
+
 # Run acceptance tests
-.PHONY: generate testacc
+.PHONY: generate lint testacc

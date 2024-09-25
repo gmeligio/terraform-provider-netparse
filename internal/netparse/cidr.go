@@ -44,7 +44,7 @@ func ContainsIP(network string, ip string) (bool, error) {
 	if err != nil {
 		return false, fmt.Errorf("failed to parse IP network: %s", network)
 	}
-	
+
 	addr, err := netip.ParseAddr(ip)
 	if err != nil {
 		return false, fmt.Errorf("failed to parse IP address: %s", ip)

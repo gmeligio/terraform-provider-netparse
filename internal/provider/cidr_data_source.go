@@ -22,7 +22,7 @@ type cidrDataSource struct{}
 type cidrDataSourceModel struct {
 	CIDR    types.String `tfsdk:"cidr"`
 	IP      types.String `tfsdk:"ip"`
-	Network   types.String `tfsdk:"network"`
+	Network types.String `tfsdk:"network"`
 }
 
 func NewCIDRDataSource() datasource.DataSource {
