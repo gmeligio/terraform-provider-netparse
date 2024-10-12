@@ -5,7 +5,7 @@
 ## Using the provider
 
 Official documentation on how to use this provider can be found on the
-[Terraform Registry](https://registry.terraform.io/providers/gmeligio/url/latest/docs).
+[Terraform Registry](https://registry.terraform.io/providers/gmeligio/netparse).
 In case of specific questions or discussions, please use the
 
 We also provide:

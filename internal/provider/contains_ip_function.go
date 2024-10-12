@@ -14,20 +14,8 @@ var _ function.Function = ContainsIPFunction{}
 
 type ContainsIPFunction struct{}
 
-type ContainsIPFunctionReturnModel struct {
-	IP      string `tfsdk:"ip"`
-	Network string `tfsdk:"network"`
-}
-
 func NewContainsIPFunction() function.Function {
 	return ContainsIPFunction{}
-}
-
-func ContainsIPFromCIDRModel(d *netparse.CidrModel) ContainsIPFunctionReturnModel {
-	return ContainsIPFunctionReturnModel{
-		IP:      d.IP,
-		Network: d.Network,
-	}
 }
 
 func (f ContainsIPFunction) Metadata(_ context.Context, req function.MetadataRequest, resp *function.MetadataResponse) {
