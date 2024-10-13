@@ -32,7 +32,9 @@ func (p *NetparseProvider) Metadata(ctx context.Context, req provider.MetadataRe
 }
 
 func (p *NetparseProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
-	resp.Schema = schema.Schema{}
+	resp.Schema = schema.Schema{
+		MarkdownDescription: "The netparse provider is used to parse networking elements, like URLs and domains. It uses `go` packages internally that implement the standard specification.",
+	}
 }
 
 func (p *NetparseProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
