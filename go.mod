@@ -1,7 +1,6 @@
 module github.com/gmeligio/terraform-provider-netparse
 
-go 1.22.0
-toolchain go1.24.1
+go 1.24.2
 
 require (
 	github.com/hashicorp/go-version v1.7.0
