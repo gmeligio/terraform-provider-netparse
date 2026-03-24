@@ -1,4 +1,4 @@
-package main
+windopackage main
 
 import (
 	"context"
@@ -17,7 +17,7 @@ import (
 
 // Run the docs generation tool, check its repository for more information on how it works and how docs
 // can be customized.
-//go:generate go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs generate --provider-name netparse
+//go:generate go tool github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs generate --provider-name netparse
 
 var (
 	// these will be set by the goreleaser configuration
