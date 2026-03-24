@@ -1,4 +1,4 @@
-windopackage main
+package main
 
 import (
 	"context"
