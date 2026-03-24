@@ -36,3 +36,6 @@ website/vendor
 
 # Environment variables
 .env
+
+# AI Agent
+.claude
