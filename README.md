@@ -48,5 +48,7 @@ make testacc
 
 1. Use Table Driven tests for Acceptance tests
 
-    - <https://go.dev/wiki/TableDrivenTests>
+    - Use table tests <https://go.dev/wiki/TableDrivenTests>
+    - Test examples with `terraform test`
     - <https://github.com/northwood-labs/terraform-provider-corefunc/blob/main/testfixtures/url_parse.go>
+    - // Add tflog.Debug and tflog.Trace like in https://github.dev/northwood-labs/terraform-provider-corefunc/blob/main/corefuncprovider/provider.go
